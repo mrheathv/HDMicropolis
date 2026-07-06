@@ -1,0 +1,19 @@
+{
+	// Copied verbatim into build/ by SvelteKit's static-file handling (like
+	// _redirects, CNAME, robots.txt in this same directory). Cloudflare's
+	// Workers Builds "Path" setting (apps/micropolis/build) runs `npx wrangler
+	// deploy` from inside this directory, so `assets.directory` is "./" --
+	// this file sits right next to the static assets it describes.
+	//
+	// Deliberately NOT `not_found_handling: "single-page-application"`: this
+	// site is mostly prerendered static pages (index.html is a real landing
+	// page, not an app shell). Only /play/micropolis and /play/sims are
+	// client-hydrated SPA routes, and the _redirects file already routes
+	// those specifically to 200.html -- a blanket SPA fallback here would
+	// serve the landing page instead of the game shell for those paths.
+	"name": "hdmicropolis",
+	"compatibility_date": "2025-01-01",
+	"assets": {
+		"directory": "./"
+	}
+}
