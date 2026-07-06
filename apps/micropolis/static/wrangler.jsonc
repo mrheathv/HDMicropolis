@@ -1,30 +1,22 @@
 {
 	// Copied verbatim into build/ by SvelteKit's static-file handling (like
-	// CNAME, robots.txt in this same directory). Cloudflare's Workers Builds
+	// robots.txt in this same directory). Cloudflare's Workers Builds
 	// "Path"/deploy-cwd setting (apps/micropolis/build) runs `npx wrangler
-	// deploy` from inside this directory, so `main`/`assets.directory` are
-	// relative to here -- this file sits right next to what it describes.
+	// deploy` from inside this directory, so `assets.directory` is relative
+	// to here -- this file sits right next to what it describes.
 	//
-	// worker.js routes any non-asset path to the 200.html SPA shell (the
-	// whole site is just the game now). Not using Workers' built-in
-	// `assets.not_found_handling: "single-page-application"` because that
-	// looks for a top-level index.html specifically, and this build only
-	// produces 200.html (adapter-static's fallback convention) since
-	// nothing is prerendered -- see svelte.config.js.
-	//
-	// html_handling: "none" disables Cloudflare's automatic .html
-	// extension-stripping/redirect behavior. That default was fighting
-	// worker.js's own redirect-following (env.ASSETS.fetch() returning a
-	// 3xx for "/200.html" -> "/200", which could still resolve to another
-	// redirect depending on request shape) and produced a genuine redirect
-	// loop in production. With no other pages left needing clean URLs,
-	// there's no downside to exact-path-only asset matching.
+	// No custom Worker script (`main`) on purpose: a hand-rolled fetch
+	// handler here went through several rounds of bugs (a redirect loop,
+	// then real JS/CSS assets being served back as text/html) trying to
+	// reimplement SPA-fallback routing by hand. Cloudflare's own
+	// not_found_handling: "single-page-application" does exactly this
+	// natively -- serves the top-level index.html for any path that isn't
+	// a literal asset -- and is what adapter-static's `fallback: 'index.html'`
+	// (svelte.config.js) is specifically named to match.
 	"name": "hdmicropolis",
 	"compatibility_date": "2025-01-01",
-	"main": "worker.js",
 	"assets": {
 		"directory": "./",
-		"binding": "ASSETS",
-		"html_handling": "none"
+		"not_found_handling": "single-page-application"
 	}
 }

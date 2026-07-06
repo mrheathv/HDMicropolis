@@ -11,9 +11,13 @@ const config = {
 			// these options are set automatically — see the documentation
 			pages: 'build', // This should be the folder where your built files will reside
 			assets: 'build', // This should be the folder where your built files will reside
-			// SPA fallback: prerendered pages stay static; the interactive play/* routes
-			// (prerender = false — live WASM/WebGL) hydrate client-side from this shell.
-			fallback: '200.html',
+			// SPA fallback: the whole site is one non-prerendered route (the game
+			// itself, live WASM/canvas), served from this shell and hydrated
+			// client-side. Named index.html (not Netlify's 200.html convention)
+			// so Cloudflare Workers' built-in
+			// assets.not_found_handling: "single-page-application" can serve it
+			// directly -- no custom Worker script needed for routing.
+			fallback: 'index.html',
 			precompress: false,
 			strict: true
 		}),
