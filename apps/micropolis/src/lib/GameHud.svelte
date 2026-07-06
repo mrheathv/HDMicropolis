@@ -16,6 +16,22 @@
 				: 'Stopped'
 	);
 	const taxLabel = $derived(`Tax ${micropolisReactive.cityTax}%`);
+
+	// Classic SimCity's RCI demand valves are clamped to ±1500 (see
+	// update.cpp) -- scale bar fill against that range.
+	const RCI_MAX = 1500;
+	const rciBars = $derived([
+		{ key: 'R', value: micropolisReactive.demandR, color: '#00c000' },
+		{ key: 'C', value: micropolisReactive.demandC, color: '#4db0ff' },
+		{ key: 'I', value: micropolisReactive.demandI, color: '#ffc800' }
+	]);
+	const rciTitle = $derived(
+		`Demand — R ${micropolisReactive.demandR} · C ${micropolisReactive.demandC} · I ${micropolisReactive.demandI}`
+	);
+
+	function barFillPercent(value: number): number {
+		return Math.min(100, (Math.abs(value) / RCI_MAX) * 100);
+	}
 </script>
 
 <div class="game-hud" aria-live="polite">
@@ -31,11 +47,21 @@
 		</button>
 	</div>
 	<div class="hud-row hud-meta">
-		<span class="hud-rci">
-			<span class="rci-item"><span class="rci-letter rci-letter-r">R</span> {micropolisReactive.demandR}</span>
-			<span class="rci-item"><span class="rci-letter rci-letter-c">C</span> {micropolisReactive.demandC}</span>
-			<span class="rci-item"><span class="rci-letter rci-letter-i">I</span> {micropolisReactive.demandI}</span>
-		</span>
+		<div class="rci-graph" title={rciTitle}>
+			{#each rciBars as bar (bar.key)}
+				<div class="rci-track">
+					<div class="rci-centerline"></div>
+					<div
+						class="rci-fill"
+						style:background={bar.value < 0 ? '#ff5c5c' : bar.color}
+						style:height="{barFillPercent(bar.value)}%"
+						style:bottom={bar.value >= 0 ? '50%' : null}
+						style:top={bar.value < 0 ? '50%' : null}
+					></div>
+				</div>
+				<span class="rci-letter rci-letter-{bar.key.toLowerCase()}">{bar.key}</span>
+			{/each}
+		</div>
 		<button
 			type="button"
 			class="hud-tax hud-tax-button"
@@ -87,27 +113,50 @@
 	.hud-meta {
 		margin-top: 0.25rem;
 		grid-template-columns: 1fr 4.25rem 4.5rem;
-		align-items: baseline;
+		align-items: center;
 		font-size: 0.75rem;
 		color: #dce4f8;
 	}
 
-	.hud-rci {
+	.rci-graph {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.65rem;
-		font-variant-numeric: tabular-nums;
+		align-items: flex-end;
+		gap: 0.3rem;
+		cursor: default;
 	}
 
-	.rci-item {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.35rem;
+	.rci-track {
+		position: relative;
+		width: 0.6rem;
+		height: 1.6rem;
+		background: rgba(255, 255, 255, 0.08);
+		border-radius: 2px;
+		overflow: hidden;
+	}
+
+	.rci-centerline {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		height: 1px;
+		background: rgba(255, 255, 255, 0.35);
+	}
+
+	.rci-fill {
+		position: absolute;
+		left: 0;
+		right: 0;
 	}
 
 	.rci-letter {
 		font-weight: 700;
-		min-width: 0.65rem;
+		font-size: 0.68rem;
+		margin-right: 0.3rem;
+	}
+
+	.rci-letter:last-child {
+		margin-right: 0;
 	}
 
 	/* Match Micropolis's classic R/C/I identity colors (green/blue/yellow). */
