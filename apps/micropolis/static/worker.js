@@ -21,6 +21,16 @@ export default {
 		// "200.html" is Netlify's/adapter-static's naming convention for "serve
 		// this SPA shell with a real 200," regardless of what status the
 		// underlying asset lookup produced.
-		return new Response(shellResponse.body, { headers: shellResponse.headers, status: 200 });
+		const headers = new Headers(shellResponse.headers);
+		// Unlike the content-hashed /_app/immutable/* files (safe to cache
+		// forever -- the hash changes if the content does), this shell gets
+		// served for every path miss and must never be cached: a stale copy
+		// references script/style hashes from a previous deploy that no
+		// longer exist, which is exactly what caused a real production
+		// outage here (JS/CSS requests 404ing against a newer deployment,
+		// falling back to this very shell and being served as the wrong
+		// MIME type).
+		headers.set('Cache-Control', 'no-store');
+		return new Response(shellResponse.body, { headers, status: 200 });
 	}
 };
