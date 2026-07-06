@@ -16,6 +16,7 @@
     createMapTileRenderer,
     type MapTileRendererBackend,
     type TileRenderer,
+    type TileLayerSpec,
   } from '@micropolis/tile-renderer';
   import { MicropolisSimulator } from '$lib/MicropolisSimulator';
   import { commandBus, shortcutFromKeyboardEvent } from '$lib/CommandBus';
@@ -40,10 +41,17 @@
   const KEY_PAN_RAMP: KeyPanRampPolicy = { ...DEFAULT_KEY_PAN_RAMP };
 
   // Tile Sets
-  import tileLayer_all10 from '$lib/images/tilesets/all.png';
+  // HD placeholder: xBRZ-upscaled 4x atlas (64x64 source px/tile) — see
+  // tools/tileset-upscale/README.md. `tileWidth`/`tileHeight` below stay at
+  // the classic 16 because that value drives on-screen tile scale (zoom,
+  // pan bounds, cursor hit-testing) throughout tile-renderer/input code;
+  // only the atlas's own addressing (this layer's tileWidth/strideX) needs
+  // to match the higher source resolution, and TileLayerSpec keeps that
+  // independent of the renderer's logical tile size.
+  import tileLayer_all10_hd from '$lib/images/tilesets/all-hd4x.png';
 
-  const tileLayers = [
-    tileLayer_all10,
+  const tileLayers: TileLayerSpec[] = [
+    { url: tileLayer_all10_hd, tileWidth: 64, tileHeight: 64, strideX: 64, strideY: 64 },
   ];
 
   const tileWidth = 16;

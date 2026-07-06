@@ -1,0 +1,14 @@
+{
+  "name": "tileset-upscale",
+  "private": true,
+  "type": "module",
+  "description": "One-off tool: xBRZ-upscale the classic 16x16 Micropolis tile atlas to a higher-resolution placeholder atlas. Not part of the pnpm workspace or app build -- run manually when regenerating HD placeholder art.",
+  "scripts": {
+    "upscale": "node upscale.mjs"
+  },
+  "devDependencies": {
+    "pngjs": "^7.0.0",
+    "sharp": "^0.35.3",
+    "xbrz-js": "^1.9.2"
+  }
+}
