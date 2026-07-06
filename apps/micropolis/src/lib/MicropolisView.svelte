@@ -10,6 +10,7 @@
   import MessageOverlay from '$lib/MessageOverlay.svelte';
   import ZoneStatusPanel from '$lib/ZoneStatusPanel.svelte';
   import BudgetModal from '$lib/BudgetModal.svelte';
+  import CityHallModal from '$lib/CityHallModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -111,6 +112,7 @@
       <GameHud />
       <ZoneStatusPanel />
       <BudgetModal />
+      <CityHallModal />
       <HelpModal />
     </div>
 

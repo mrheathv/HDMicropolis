@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { micropolisReactive } from '$lib/MicropolisReactive.svelte';
 	import { toolState } from '$lib/ToolState.svelte';
+	import { cityHallState } from '$lib/CityHallState.svelte';
 
 	const funds = $derived(micropolisReactive.totalFunds);
 	const dateLabel = $derived(
@@ -27,7 +28,14 @@
 			<span class="rci-item"><span class="rci-letter rci-letter-c">C</span> {micropolisReactive.demandC}</span>
 			<span class="rci-item"><span class="rci-letter rci-letter-i">I</span> {micropolisReactive.demandI}</span>
 		</span>
-		<span class="hud-tax">{taxLabel}</span>
+		<button
+			type="button"
+			class="hud-tax hud-tax-button"
+			onclick={() => cityHallState.toggle()}
+			title="Open City Hall (tax rate, difficulty)"
+		>
+			{taxLabel}
+		</button>
 		<span class="hud-speed" class:paused={micropolisReactive.simPaused}>{simLabel}</span>
 	</div>
 	{#if toolState.lastToolFeedback}
@@ -112,6 +120,24 @@
 	.hud-tax,
 	.hud-speed {
 		font-variant-numeric: tabular-nums;
+	}
+
+	.hud-tax-button {
+		pointer-events: auto;
+		cursor: pointer;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-radius: 3px;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+	}
+
+	.hud-tax-button:hover,
+	.hud-tax-button:focus-visible {
+		background: rgba(255, 255, 255, 0.12);
+		outline: none;
 	}
 
 	.hud-date {
