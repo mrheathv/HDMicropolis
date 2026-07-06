@@ -94,7 +94,7 @@
 		min-width: 0.65rem;
 	}
 
-	/* Match the site-wide R/C/I identity colors (routes/styles.css --rci-*). */
+	/* Match Micropolis's classic R/C/I identity colors (green/blue/yellow). */
 	.rci-letter-r {
 		color: #00c000;
 	}
