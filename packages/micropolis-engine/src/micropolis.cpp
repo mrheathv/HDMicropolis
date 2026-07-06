@@ -1575,4 +1575,46 @@ long Micropolis::getMopSize()
 }
 
 
+long Micropolis::getPopulationDensityMapAddress()
+{
+    return (long)populationDensityMap.getBase();
+}
+
+
+long Micropolis::getTrafficDensityMapAddress()
+{
+    return (long)trafficDensityMap.getBase();
+}
+
+
+long Micropolis::getPollutionDensityMapAddress()
+{
+    return (long)pollutionDensityMap.getBase();
+}
+
+
+long Micropolis::getLandValueMapAddress()
+{
+    return (long)landValueMap.getBase();
+}
+
+
+long Micropolis::getCrimeRateMapAddress()
+{
+    return (long)crimeRateMap.getBase();
+}
+
+
+long Micropolis::getRateOfGrowthMapAddress()
+{
+    return (long)rateOfGrowthMap.getBase();
+}
+
+
+long Micropolis::getPowerGridMapAddress()
+{
+    return (long)powerGridMap.getBase();
+}
+
+
 ////////////////////////////////////////////////////////////////////////

@@ -1924,6 +1924,29 @@ public:
 
     long getMopSize();
 
+    ////////////////////////////////////////////////////////////////////////
+    // Overlay ("color map") raw buffer addresses, for the HD web frontend's
+    // classic SimCity Zoom-menu overlays. Mirrors getMapAddress()'s pattern
+    // (plain `long` address rather than `void*`) so Embind marshals them the
+    // same proven way. Dimensions are the fixed WORLD_W_2/WORLD_H_2 (60x50,
+    // 1 byte/cell) for the five *Density*/*Rate*/landValue maps,
+    // WORLD_W/WORLD_H (120x100, 1 byte/cell) for powerGridMap, and
+    // WORLD_W_8/WORLD_H_8 (15x13, 2 bytes/cell signed) for rateOfGrowthMap.
+
+    long getPopulationDensityMapAddress();
+
+    long getTrafficDensityMapAddress();
+
+    long getPollutionDensityMapAddress();
+
+    long getLandValueMapAddress();
+
+    long getCrimeRateMapAddress();
+
+    long getRateOfGrowthMapAddress();
+
+    long getPowerGridMapAddress();
+
 public:
 
     std::string cityFileName; ///< Filename of the last loaded city
