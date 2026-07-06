@@ -1,0 +1,5 @@
+# Cloudflare Pages (and Netlify) SPA fallback for the two interactive,
+# non-prerendered routes (they hydrate client-side from the app shell --
+# see svelte.config.js `fallback: '200.html'` and
+# src/routes/play/*/+page.server.ts `prerender = false`).
+/play/* /200.html 200
