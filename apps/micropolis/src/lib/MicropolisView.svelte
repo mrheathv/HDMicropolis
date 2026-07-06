@@ -11,6 +11,7 @@
   import ZoneStatusPanel from '$lib/ZoneStatusPanel.svelte';
   import BudgetModal from '$lib/BudgetModal.svelte';
   import CityHallModal from '$lib/CityHallModal.svelte';
+  import CitySelectModal from '$lib/CitySelectModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -113,6 +114,7 @@
       <ZoneStatusPanel />
       <BudgetModal />
       <CityHallModal />
+      <CitySelectModal />
       <HelpModal />
     </div>
 

@@ -2,6 +2,7 @@
 	import { micropolisReactive } from '$lib/MicropolisReactive.svelte';
 	import { toolState } from '$lib/ToolState.svelte';
 	import { cityHallState } from '$lib/CityHallState.svelte';
+	import { citySelectState } from '$lib/CitySelectState.svelte';
 
 	const funds = $derived(micropolisReactive.totalFunds);
 	const dateLabel = $derived(
@@ -20,7 +21,14 @@
 <div class="game-hud" aria-live="polite">
 	<div class="hud-row hud-row-primary">
 		<span class="hud-funds">${funds.toLocaleString()}</span>
-		<span class="hud-date" title={dateLabel}>{dateLabel}</span>
+		<button
+			type="button"
+			class="hud-date hud-date-button"
+			onclick={() => citySelectState.toggle()}
+			title="{dateLabel} — click to load a different city"
+		>
+			{dateLabel}
+		</button>
 	</div>
 	<div class="hud-row hud-meta">
 		<span class="hud-rci">
@@ -145,6 +153,25 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.hud-date-button {
+		pointer-events: auto;
+		cursor: pointer;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-radius: 3px;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+	}
+
+	.hud-date-button:hover,
+	.hud-date-button:focus-visible {
+		background: rgba(255, 255, 255, 0.12);
+		outline: none;
 	}
 
 	.hud-tax,
