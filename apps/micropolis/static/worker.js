@@ -13,8 +13,21 @@ export default {
 	async fetch(request, env) {
 		const url = new URL(request.url);
 		if (url.pathname.startsWith('/play/')) {
-			const shellRequest = new Request(new URL('/200.html', url), request);
-			return env.ASSETS.fetch(shellRequest);
+			// Fetch the already-canonical extensionless path (Workers assets'
+			// default html_handling redirects "/200.html" -> "/200"; requesting
+			// "/200.html" directly just returns that redirect, which we'd
+			// otherwise forward straight to the browser instead of content).
+			let response = await env.ASSETS.fetch(new Request(new URL('/200', url), request));
+			if (response.status >= 300 && response.status < 400) {
+				const location = response.headers.get('Location');
+				if (location) {
+					response = await env.ASSETS.fetch(new Request(new URL(location, url), request));
+				}
+			}
+			// "200.html" is Netlify's/adapter-static's naming convention for
+			// "serve this SPA shell with a real 200," regardless of what status
+			// the underlying asset lookup produced.
+			return new Response(response.body, { headers: response.headers, status: 200 });
 		}
 		return env.ASSETS.fetch(request);
 	}
