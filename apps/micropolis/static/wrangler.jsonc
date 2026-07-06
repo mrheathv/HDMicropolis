@@ -5,12 +5,12 @@
 	// deploy` from inside this directory, so `main`/`assets.directory` are
 	// relative to here -- this file sits right next to what it describes.
 	//
-	// worker.js explicitly routes /play/* to the 200.html SPA shell. Plain
-	// `assets.not_found_handling: "single-page-application"` was NOT used:
-	// this site is mostly prerendered static pages (index.html is a real
-	// landing page, not an app shell), so a blanket SPA fallback would serve
-	// the landing page instead of the game shell for /play/* paths, and
-	// would also swallow genuine 404s everywhere else on the site.
+	// worker.js routes any non-asset path to the 200.html SPA shell (the
+	// whole site is just the game now). Not using Workers' built-in
+	// `assets.not_found_handling: "single-page-application"` because that
+	// looks for a top-level index.html specifically, and this build only
+	// produces 200.html (adapter-static's fallback convention) since
+	// nothing is prerendered -- see svelte.config.js.
 	"name": "hdmicropolis",
 	"compatibility_date": "2025-01-01",
 	"main": "worker.js",
