@@ -11,11 +11,20 @@
 	// looks for a top-level index.html specifically, and this build only
 	// produces 200.html (adapter-static's fallback convention) since
 	// nothing is prerendered -- see svelte.config.js.
+	//
+	// html_handling: "none" disables Cloudflare's automatic .html
+	// extension-stripping/redirect behavior. That default was fighting
+	// worker.js's own redirect-following (env.ASSETS.fetch() returning a
+	// 3xx for "/200.html" -> "/200", which could still resolve to another
+	// redirect depending on request shape) and produced a genuine redirect
+	// loop in production. With no other pages left needing clean URLs,
+	// there's no downside to exact-path-only asset matching.
 	"name": "hdmicropolis",
 	"compatibility_date": "2025-01-01",
 	"main": "worker.js",
 	"assets": {
 		"directory": "./",
-		"binding": "ASSETS"
+		"binding": "ASSETS",
+		"html_handling": "none"
 	}
 }
