@@ -2,4 +2,8 @@
 # non-prerendered routes (they hydrate client-side from the app shell --
 # see svelte.config.js `fallback: '200.html'` and
 # src/routes/play/*/+page.server.ts `prerender = false`).
+#
+# NOTE: inert on Cloudflare Workers Static Assets (the current deploy
+# target) -- Workers doesn't process _redirects, only Pages does. worker.js
+# in this same directory does the equivalent routing for Workers.
 /play/* /200.html 200
