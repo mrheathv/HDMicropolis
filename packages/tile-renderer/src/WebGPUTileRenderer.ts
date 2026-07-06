@@ -234,11 +234,12 @@ fn fs(input: VertexOut) -> @location(0) vec4<f32> {
 	let policy = uniforms.policy;
 	let params = uniforms.params;
 	let tileCoord = floor(input.screenTile);
-	if (tileCoord.x < 0.0 || tileCoord.y < 0.0 || tileCoord.x >= map.x || tileCoord.y >= map.y) {
-		return vec4<f32>(0.0, 0.0, 0.0, 1.0);
-	}
+	let inBounds = tileCoord.x >= 0.0 && tileCoord.y >= 0.0 && tileCoord.x < map.x && tileCoord.y < map.y;
+	// Clamp (rather than branch-and-return) so textureSample below stays in uniform
+	// control flow -- WGSL forbids calling it from a non-uniform conditional.
+	let clampedCoord = clamp(tileCoord, vec2<f32>(0.0), vec2<f32>(map.x - 1.0, map.y - 1.0));
 
-	let mapCoord = vec2<i32>(i32(tileCoord.y), i32(tileCoord.x));
+	let mapCoord = vec2<i32>(i32(clampedCoord.y), i32(clampedCoord.x));
 	let cellValue = i32(textureLoad(mapTexture, mapCoord, 0).x);
 	let mopValue = i32(textureLoad(mopTexture, mapCoord, 0).x);
 	let tileSet = mopValue & 0xff;
@@ -255,7 +256,8 @@ fn fs(input: VertexOut) -> @location(0) vec4<f32> {
 	let positionInTile = fract(input.screenTile);
 	let tilePixel = atlasRect.xy + vec2<f32>(f32(tileCol), f32(tileRow)) * atlas.zw + positionInTile * atlas.xy;
 	let tileUv = tilePixel / vec2<f32>(textureDimensions(tilesTexture));
-	return textureSample(tilesTexture, tilesSampler, tileUv);
+	let sampled = textureSample(tilesTexture, tilesSampler, tileUv);
+	return select(vec4<f32>(0.0, 0.0, 0.0, 1.0), sampled, inBounds);
 }`
 		});
 
