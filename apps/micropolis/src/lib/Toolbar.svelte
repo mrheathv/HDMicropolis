@@ -41,11 +41,15 @@
 		padding: 0.2rem 0;
 		overflow-x: hidden;
 		overflow-y: auto;
-		background: rgba(26, 26, 46, 0.94);
+		background: rgba(24, 24, 42, 0.94);
 		border: none;
 		border-right: 1px solid #5a5a78;
-		box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+		box-shadow:
+			inset -1px 0 0 rgba(255, 255, 255, 0.06),
+			2px 0 10px rgba(0, 0, 0, 0.35);
 		font-family: ui-monospace, 'Chicago', 'Geneva', monospace;
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
 		contain: layout style;
 		scrollbar-width: thin;
 		scrollbar-color: #4a4a68 transparent;
@@ -71,10 +75,10 @@
 		display: flex;
 		flex-direction: row;
 		align-items: baseline;
-		margin: 0;
-		padding: 0.1rem 0.45rem;
+		margin: 0 0.15rem;
+		padding: 0.1rem 0.3rem;
 		border: none;
-		border-radius: 0;
+		border-radius: 3px;
 		background: transparent;
 		color: #e8eeff;
 		cursor: pointer;
@@ -87,6 +91,7 @@
 		box-sizing: border-box;
 		outline: none;
 		gap: 0.2rem;
+		transition: background-color 0.12s ease, box-shadow 0.12s ease, color 0.12s ease;
 	}
 
 	.tool-key {
@@ -108,7 +113,7 @@
 	.tool-item.active {
 		background: #304878;
 		color: #fff;
-		box-shadow: inset 2px 0 0 #8ab8ff;
+		box-shadow: inset 2px 0 0 #8ab8ff, 0 1px 3px rgba(0, 0, 0, 0.3);
 	}
 
 	.tool-item.active .tool-key {

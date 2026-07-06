@@ -23,9 +23,9 @@
 	</div>
 	<div class="hud-row hud-meta">
 		<span class="hud-rci">
-			<span class="rci-item"><span class="rci-letter">R</span> {micropolisReactive.demandR}</span>
-			<span class="rci-item"><span class="rci-letter">C</span> {micropolisReactive.demandC}</span>
-			<span class="rci-item"><span class="rci-letter">I</span> {micropolisReactive.demandI}</span>
+			<span class="rci-item"><span class="rci-letter rci-letter-r">R</span> {micropolisReactive.demandR}</span>
+			<span class="rci-item"><span class="rci-letter rci-letter-c">C</span> {micropolisReactive.demandC}</span>
+			<span class="rci-item"><span class="rci-letter rci-letter-i">I</span> {micropolisReactive.demandI}</span>
 		</span>
 		<span class="hud-tax">{taxLabel}</span>
 		<span class="hud-speed" class:paused={micropolisReactive.simPaused}>{simLabel}</span>
@@ -48,11 +48,14 @@
 		color: #f4f4f0;
 		background: rgba(8, 12, 20, 0.82);
 		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 6px;
+		border-radius: 8px;
 		padding: 0.45rem 0.65rem;
 		width: 20.5rem;
 		box-sizing: border-box;
 		backdrop-filter: blur(4px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
 	}
 
 	.hud-row {
@@ -89,6 +92,19 @@
 	.rci-letter {
 		font-weight: 700;
 		min-width: 0.65rem;
+	}
+
+	/* Match the site-wide R/C/I identity colors (routes/styles.css --rci-*). */
+	.rci-letter-r {
+		color: #00c000;
+	}
+
+	.rci-letter-c {
+		color: #4db0ff;
+	}
+
+	.rci-letter-i {
+		color: #ffc800;
 	}
 
 	.hud-funds,
