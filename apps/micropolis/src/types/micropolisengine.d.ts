@@ -376,6 +376,13 @@ export interface Micropolis extends ClassHandle {
   getMapSize(): number;
   getMopAddress(): number;
   getMopSize(): number;
+  getPopulationDensityMapAddress(): number;
+  getTrafficDensityMapAddress(): number;
+  getPollutionDensityMapAddress(): number;
+  getLandValueMapAddress(): number;
+  getCrimeRateMapAddress(): number;
+  getRateOfGrowthMapAddress(): number;
+  getPowerGridMapAddress(): number;
   animateTiles(): void;
   setSpeed(_0: number): void;
   setGameLevel(_0: GameLevel): void;

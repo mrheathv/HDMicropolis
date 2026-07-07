@@ -2,8 +2,10 @@
  * Scalar field overlays (pollution, population, crime, …) on the shared raster layer stack.
  * Data: engine map buffers (e.g. getPollutionDensityMapBuffer) or mop/heap views.
  */
+import type { MainModule, Micropolis } from '../../../types/micropolisengine.d.js';
+import { extractOverlayGrid, type OverlayMapId } from '../../wasm/overlayMaps';
 import type { ColormapFn } from './AtmosphericLayer';
-import { getOrCreateAtmosphericLayer } from './layerRegistry';
+import { getOrCreateAtmosphericLayer, removeAtmosphericLayer } from './layerRegistry';
 import type { OverlayColormapId } from './overlayColormaps';
 import { OVERLAY_COLORMAPS } from './overlayColormaps';
 
@@ -53,4 +55,35 @@ export const SCALAR_OVERLAY_IDS = {
 	crime: 'mop.crime',
 	landValue: 'mop.land-value',
 	traffic: 'mop.traffic',
+	rateOfGrowth: 'mop.rate-of-growth',
+	power: 'mop.power',
 } as const;
+
+/**
+ * Reconciles the raster layer stack against the currently selected classic "Zoom" overlay:
+ * removes every other MOP layer, then (unless 'none') re-extracts fresh engine data and
+ * repaints the active one. Cheap enough to call every animation frame.
+ */
+export function applyActiveOverlay(
+	engine: MainModule | null,
+	micropolis: Micropolis | null,
+	activeId: OverlayMapId | 'none',
+): void {
+	for (const key of Object.keys(SCALAR_OVERLAY_IDS) as OverlayMapId[]) {
+		if (key !== activeId) removeAtmosphericLayer(SCALAR_OVERLAY_IDS[key]);
+	}
+	if (activeId === 'none' || !engine || !micropolis) return;
+
+	const grid = extractOverlayGrid(engine, micropolis, activeId);
+	if (!grid) return;
+
+	updateScalarOverlayLayer(SCALAR_OVERLAY_IDS[activeId], grid.values, {
+		worldWidth: engine.WORLD_W * engine.EDITOR_TILE_SIZE,
+		worldHeight: engine.WORLD_H * engine.EDITOR_TILE_SIZE,
+		mapWidth: grid.mapWidth,
+		mapHeight: grid.mapHeight,
+		tileWidth: grid.tileWidth,
+		tileHeight: grid.tileHeight,
+		colormap: activeId,
+	});
+}

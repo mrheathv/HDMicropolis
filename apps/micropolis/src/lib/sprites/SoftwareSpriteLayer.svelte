@@ -2,6 +2,8 @@
 	import type { MapViewport } from '@micropolis/render-core';
 	import type { MicropolisSimulator } from '$lib/MicropolisSimulator';
 	import { micropolisReactive } from '$lib/MicropolisReactive.svelte';
+	import { overlayState } from '$lib/OverlayState.svelte';
+	import { applyActiveOverlay } from './layers/scalarFieldOverlay';
 	import Sprite from './Sprite.svelte';
 	import AtmosphericLayerView from './layers/AtmosphericLayerView.svelte';
 	import { allSpriteInstances } from './spriteRegistry.svelte';
@@ -35,6 +37,7 @@
 		}
 		watchSkywritingMilestones();
 		tickSkywriting();
+		applyActiveOverlay(simulator?.micropolisengine ?? null, m, overlayState.active);
 		layerView?.refresh();
 	}
 

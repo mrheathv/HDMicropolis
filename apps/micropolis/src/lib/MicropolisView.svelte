@@ -12,6 +12,7 @@
   import BudgetModal from '$lib/BudgetModal.svelte';
   import CityHallModal from '$lib/CityHallModal.svelte';
   import CitySelectModal from '$lib/CitySelectModal.svelte';
+  import OverlayModal from '$lib/OverlayModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -115,6 +116,7 @@
       <BudgetModal />
       <CityHallModal />
       <CitySelectModal />
+      <OverlayModal />
       <HelpModal />
     </div>
 

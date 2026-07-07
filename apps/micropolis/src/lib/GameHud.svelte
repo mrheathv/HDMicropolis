@@ -3,6 +3,20 @@
 	import { toolState } from '$lib/ToolState.svelte';
 	import { cityHallState } from '$lib/CityHallState.svelte';
 	import { citySelectState } from '$lib/CitySelectState.svelte';
+	import { overlayState } from '$lib/OverlayState.svelte';
+
+	// Classic "Zoom" overlay menu labels (see documentation/openlaszlo/resources/data/strings_en-US.xml).
+	const OVERLAY_LABELS: Record<string, string> = {
+		none: 'All Zones',
+		population: 'Population Density',
+		rateOfGrowth: 'Rate of Growth',
+		traffic: 'Traffic Density',
+		pollution: 'Pollution Density',
+		crime: 'Crime Rate',
+		landValue: 'Land Value',
+		power: 'Power Connectivity'
+	};
+	const overlayLabel = $derived(OVERLAY_LABELS[overlayState.active] ?? 'All Zones');
 
 	const funds = $derived(micropolisReactive.totalFunds);
 	const dateLabel = $derived(
@@ -71,6 +85,16 @@
 			{taxLabel}
 		</button>
 		<span class="hud-speed" class:paused={micropolisReactive.simPaused}>{simLabel}</span>
+	</div>
+	<div class="hud-row hud-zoom-row">
+		<button
+			type="button"
+			class="hud-zoom-button"
+			onclick={() => overlayState.toggle()}
+			title="Open the Zoom overlay picker"
+		>
+			Zoom: {overlayLabel}
+		</button>
 	</div>
 	{#if toolState.lastToolFeedback}
 		<div class="hud-feedback">{toolState.lastToolFeedback}</div>
@@ -226,6 +250,31 @@
 	.hud-tax,
 	.hud-speed {
 		text-align: right;
+	}
+
+	.hud-zoom-row {
+		margin-top: 0.3rem;
+	}
+
+	.hud-zoom-button {
+		pointer-events: auto;
+		cursor: pointer;
+		width: 100%;
+		margin: 0;
+		padding: 0.15rem 0.3rem;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.06);
+		color: inherit;
+		font: inherit;
+		font-size: 0.75rem;
+		text-align: left;
+	}
+
+	.hud-zoom-button:hover,
+	.hud-zoom-button:focus-visible {
+		background: rgba(255, 255, 255, 0.14);
+		outline: none;
 	}
 
 	.hud-feedback {

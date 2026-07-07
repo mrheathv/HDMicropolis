@@ -40,6 +40,10 @@ export function getAtmosphericLayer(id: string): AtmosphericLayer | undefined {
 	return layers.get(id)?.layer;
 }
 
+export function removeAtmosphericLayer(id: string): void {
+	layers.delete(id);
+}
+
 export function setLayerBlend(id: string, blend: LayerBlendMode): void {
 	const entry = layers.get(id);
 	if (entry) entry.blend = blend;
