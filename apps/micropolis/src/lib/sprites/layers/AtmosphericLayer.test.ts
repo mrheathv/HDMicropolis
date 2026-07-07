@@ -32,6 +32,10 @@ describe('AtmosphericLayer', () => {
 		values[21] = 100;
 		layer.fillFromTileGrid(values, 8, 6, pollutionColormap, 16, 16);
 		layer.smooth(1);
-		expect(layer.getPixelAlpha(10, 8)).toBeGreaterThan(0);
+		// values[20] is tile (tx=4, ty=2), which maps to layer pixels x:16-19, y:8-11
+		// at this scale/tileWidth -- pick a pixel inside that hot region. (Ramps now go
+		// fully transparent at zero intensity, so a distant pixel like (10, 8) is
+		// correctly 0 here rather than picking up a fixed alpha floor.)
+		expect(layer.getPixelAlpha(17, 9)).toBeGreaterThan(0);
 	});
 });
