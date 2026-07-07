@@ -7,10 +7,12 @@
 # What this does:
 #   1. Build C++/WASM engine (packages/micropolis-engine → make install)
 #   2. Run Vitest suite against real WASM (pnpm --filter micropolis run test)
-#   3. Verify monorepo structure invariants (pnpm run verify:structure)
-#   4. Optionally generate Doxygen C++ API docs
-#   5. Build SvelteKit app (pnpm --filter micropolis run build) — includes Jekyll
-#   6. Deploy to GitHub Pages ONLY if you check "Deploy to GitHub Pages" (default: off)
+#   3. Commit the rebuilt engine artifacts back to this branch ONLY if you
+#      check "Commit rebuilt engine artifacts" (default: off)
+#   4. Verify monorepo structure invariants (pnpm run verify:structure)
+#   5. Optionally generate Doxygen C++ API docs
+#   6. Build SvelteKit app (pnpm --filter micropolis run build) — includes Jekyll
+#   7. Deploy to GitHub Pages ONLY if you check "Deploy to GitHub Pages" (default: off)
 
 name: Build Wasm Library with Emscripten
 
@@ -25,6 +27,13 @@ on:
         description: >-
           Deploy build to GitHub Pages (micropolisweb.com). Leave unchecked while
           developing — verify the build first, then re-run with this enabled.
+        type: boolean
+        default: false
+      commit_rebuilt_engine:
+        description: >-
+          Commit + push the freshly-built micropolisengine.{js,wasm,data}/.d.ts
+          back to this branch if the build changed them. Leave unchecked for a
+          routine verification run.
         type: boolean
         default: false
 
@@ -70,6 +79,23 @@ jobs:
 
       - name: Run Micropolis Vitest suite
         run: pnpm --filter micropolis run test
+
+      - name: Commit rebuilt engine artifacts
+        if: ${{ inputs.commit_rebuilt_engine }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add \
+            apps/micropolis/src/lib/micropolisengine.js \
+            apps/micropolis/src/lib/micropolisengine.wasm \
+            apps/micropolis/src/lib/micropolisengine.data \
+            apps/micropolis/src/types/micropolisengine.d.ts
+          if git diff --cached --quiet; then
+            echo "Rebuilt engine artifacts are unchanged; nothing to commit."
+          else
+            git commit -m "Rebuild WASM engine artifacts (automated, workflow_dispatch)"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
 
       - name: Build optional Doxygen C++ API docs
         if: ${{ inputs.include_doxygen }}
