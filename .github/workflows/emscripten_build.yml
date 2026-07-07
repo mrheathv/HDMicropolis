@@ -1,5 +1,6 @@
 # Manual runs only — does NOT run on push to main.
 # Protects https://micropolisweb.com/ during development: merge freely; publish only when ready.
+# (touched to force GitHub Actions to re-index this workflow file)
 #
 # Actions → Build Wasm Library with Emscripten → Run workflow
 #
