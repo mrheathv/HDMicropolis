@@ -86,7 +86,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpadi8qsl1.js
+// include: /tmp/tmpw25q91h2.js
 
   if (!Module['expectedDataFileDownloads']) Module['expectedDataFileDownloads'] = 0;
   Module['expectedDataFileDownloads']++;
@@ -214,21 +214,21 @@ Module['FS_createPath']("/", "cities", true, true);
 
   })();
 
-// end include: /tmp/tmpadi8qsl1.js
-// include: /tmp/tmpbrw6rfbj.js
+// end include: /tmp/tmpw25q91h2.js
+// include: /tmp/tmpvumje2xi.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if ((typeof ENVIRONMENT_IS_WASM_WORKER != 'undefined' && ENVIRONMENT_IS_WASM_WORKER) || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD) || (typeof ENVIRONMENT_IS_AUDIO_WORKLET != 'undefined' && ENVIRONMENT_IS_AUDIO_WORKLET)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpbrw6rfbj.js
-// include: /tmp/tmp9_oei1kk.js
+  // end include: /tmp/tmpvumje2xi.js
+// include: /tmp/tmpyirlmp_a.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmp9_oei1kk.js
+  // end include: /tmp/tmpyirlmp_a.js
 
 
 var programArgs = [];
@@ -6763,7 +6763,6 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('noInitialRun');
   ignoredModuleProp('onAbort');
   ignoredModuleProp('onExit');
-  ignoredModuleProp('onRuntimeInitialized');
   ignoredModuleProp('postRun');
   ignoredModuleProp('preInit');
   ignoredModuleProp('statusMessage');
@@ -6970,6 +6969,9 @@ async function run() {
   if (ABORT) return;
 
   initRuntime();
+
+  Module['onRuntimeInitialized']?.();
+  consumedModuleProp('onRuntimeInitialized');
 
   assert(!Module['_main'], 'compiled without a main, but one is present. if you added it from JS, use Module["onRuntimeInitialized"]');
 
