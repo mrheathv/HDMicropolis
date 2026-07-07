@@ -6,13 +6,14 @@
 #
 # What this does:
 #   1. Build C++/WASM engine (packages/micropolis-engine → make install)
-#   2. Run Vitest suite against real WASM (pnpm --filter micropolis run test)
-#   3. Commit the rebuilt engine artifacts back to this branch ONLY if you
+#   2. Commit the rebuilt engine artifacts back to this branch ONLY if you
 #      check "Commit rebuilt engine artifacts" (default: off)
-#   4. Verify monorepo structure invariants (pnpm run verify:structure)
-#   5. Optionally generate Doxygen C++ API docs
-#   6. Build SvelteKit app (pnpm --filter micropolis run build) — includes Jekyll
-#   7. Deploy to GitHub Pages ONLY if you check "Deploy to GitHub Pages" (default: off)
+#   3. Verify monorepo structure invariants (pnpm run verify:structure)
+#   4. Build vitamoo/mooshow (needed by monorepo.integration.test.ts's dist checks)
+#   5. Run Vitest suite against real WASM (pnpm --filter micropolis run test)
+#   6. Optionally generate Doxygen C++ API docs
+#   7. Build SvelteKit app (pnpm --filter micropolis run build) — includes Jekyll
+#   8. Deploy to GitHub Pages ONLY if you check "Deploy to GitHub Pages" (default: off)
 
 name: Build Wasm Library with Emscripten
 
@@ -75,11 +76,9 @@ jobs:
           pnpm --filter @micropolis/engine-wasm run build
 
       - name: Commit rebuilt engine artifacts
-        # Gated only on the build above, not on later/unrelated steps (e.g. the
-        # vitamoo/mooshow dist-file checks in the Vitest suite, which this
-        # workflow never builds) -- a custom `if:` implicitly ANDs success(),
-        # so placing this after Vitest meant a failing, unrelated test would
-        # silently skip the commit.
+        # Gated only on the build above, not on later/unrelated steps -- a
+        # custom `if:` implicitly ANDs success(), so placing this after Vitest
+        # meant any later step failing would silently skip the commit.
         if: ${{ inputs.commit_rebuilt_engine }}
         run: |
           git config user.name "github-actions[bot]"
@@ -98,6 +97,9 @@ jobs:
 
       - name: Verify monorepo structure
         run: pnpm run verify:structure
+
+      - name: Build vitamoo/mooshow (dist files checked by monorepo.integration.test.ts)
+        run: pnpm --filter vitamoo --filter mooshow run build
 
       - name: Run Micropolis Vitest suite
         run: pnpm --filter micropolis run test
