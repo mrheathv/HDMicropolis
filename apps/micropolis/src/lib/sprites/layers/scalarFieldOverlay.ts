@@ -78,12 +78,15 @@ export function applyActiveOverlay(
 	if (!grid) return;
 
 	updateScalarOverlayLayer(SCALAR_OVERLAY_IDS[activeId], grid.values, {
-		worldWidth: engine.WORLD_W * engine.EDITOR_TILE_SIZE,
-		worldHeight: engine.WORLD_H * engine.EDITOR_TILE_SIZE,
+		// MapViewport's "world pixel" space is tile-index units (its tileWidth/tileHeight
+		// are hardcoded to 1 by the renderer), so the layer must be sized in tile units too.
+		worldWidth: engine.WORLD_W,
+		worldHeight: engine.WORLD_H,
 		mapWidth: grid.mapWidth,
 		mapHeight: grid.mapHeight,
 		tileWidth: grid.tileWidth,
 		tileHeight: grid.tileHeight,
 		colormap: activeId,
+		blend: 'source-over',
 	});
 }

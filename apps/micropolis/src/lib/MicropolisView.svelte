@@ -22,8 +22,8 @@
   import type { CursorPresence } from '$lib/input/types';
   import type { ScreenRect } from '$lib/input/viewportTileFrame';
 
-  let micropolisSimulator: MicropolisSimulator | null = null;
-  let tileView: TileView | null = null;
+  let micropolisSimulator: MicropolisSimulator | null = $state(null);
+  let tileView: TileView | null = $state(null);
   let viewRenderRef: (() => void) | null = null;
 
   function getMapViewport() {

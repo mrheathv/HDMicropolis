@@ -28,9 +28,14 @@
 	let layerView: AtmosphericLayerView | null = $state(null);
 
 	const instances = $derived(allSpriteInstances());
-	const viewport = $derived(getViewport() ?? null);
+	// getViewport() reads a live renderer field that isn't itself reactive
+	// (TileView's tileRenderer initializes asynchronously after mount), so a
+	// one-shot $derived can get stuck at null forever. Poll it every frame
+	// instead, alongside the rest of refreshSprites()'s per-frame work.
+	let viewport: MapViewport | null = $state(null);
 
 	function refreshSprites(): void {
+		viewport = getViewport() ?? null;
 		const m = simulator?.micropolis ?? null;
 		if (m) {
 			setEngineSpriteInstances(syncEngineSprites(m, 'classic'));

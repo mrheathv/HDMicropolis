@@ -23,7 +23,11 @@ export interface OverlayGrid {
 	values: Float64Array;
 	mapWidth: number;
 	mapHeight: number;
-	/** World-pixel span of one map cell (a Map<DATA,BLKSIZE> cell covers BLKSIZE world tiles). */
+	/**
+	 * Span of one map cell in **world-tile units** (MapViewport's "world pixel" space is
+	 * tile-index units, not engine pixels -- its tileWidth/tileHeight are hardcoded to 1 by
+	 * the renderer's syncViewportScreenScale). A Map<DATA,BLKSIZE> cell covers BLKSIZE tiles.
+	 */
 	tileWidth: number;
 	tileHeight: number;
 }
@@ -52,13 +56,12 @@ export function extractOverlayGrid(
 ): OverlayGrid | null {
 	const worldW = engine.WORLD_W;
 	const worldH = engine.WORLD_H;
-	const tilePx = engine.EDITOR_TILE_SIZE;
 
 	if (id === 'power') {
 		const heap = heapU8FromEmscriptenModule(engine);
 		if (!heap) return null;
 		const values = transposeColumnMajor(heap, micropolis.getPowerGridMapAddress(), 1, worldW, worldH);
-		return { values, mapWidth: worldW, mapHeight: worldH, tileWidth: tilePx, tileHeight: tilePx };
+		return { values, mapWidth: worldW, mapHeight: worldH, tileWidth: 1, tileHeight: 1 };
 	}
 
 	if (id === 'rateOfGrowth') {
@@ -69,7 +72,7 @@ export function extractOverlayGrid(
 		const values = transposeColumnMajor(heap, micropolis.getRateOfGrowthMapAddress(), 2, mapWidth, mapHeight);
 		for (let i = 0; i < values.length; i++) values[i] = Math.abs(values[i]);
 		const scale = Math.round(worldW / mapWidth);
-		return { values, mapWidth, mapHeight, tileWidth: scale * tilePx, tileHeight: scale * tilePx };
+		return { values, mapWidth, mapHeight, tileWidth: scale, tileHeight: scale };
 	}
 
 	const heap = heapU8FromEmscriptenModule(engine);
@@ -77,8 +80,8 @@ export function extractOverlayGrid(
 	const mapWidth = engine.WORLD_W_2;
 	const mapHeight = engine.WORLD_H_2;
 	const scale = Math.round(worldW / mapWidth);
-	const tileWidth = scale * tilePx;
-	const tileHeight = scale * tilePx;
+	const tileWidth = scale;
+	const tileHeight = scale;
 
 	switch (id) {
 		case 'population':
