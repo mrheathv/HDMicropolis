@@ -12,7 +12,7 @@
 #   4. Build vitamoo/mooshow (needed by monorepo.integration.test.ts's dist checks)
 #   5. Run Vitest suite against real WASM (pnpm --filter micropolis run test)
 #   6. Optionally generate Doxygen C++ API docs
-#   7. Build SvelteKit app (pnpm --filter micropolis run build) — includes Jekyll
+#   7. Build SvelteKit app (vite build)
 #   8. Deploy to GitHub Pages ONLY if you check "Deploy to GitHub Pages" (default: off)
 
 name: Build Wasm Library with Emscripten
@@ -111,20 +111,12 @@ jobs:
           echo "Doxygen warnings:"
           cat doxygen_warnings || true
 
-      - name: Setup Ruby (for Jekyll)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          working-directory: apps/micropolis/website
-          bundler-cache: true
-
-      - name: Build SvelteKit app (Jekyll → _jekyll_content_build, Vite → build/)
-        # Calls build:jekyll then build:svelte directly — avoids triggering the
-        # prebuild hook (which would re-run make install) while keeping builds ordered.
-        run: |
-          cd apps/micropolis
-          pnpm run build:jekyll
-          pnpm run build:svelte
+      - name: Build SvelteKit app (Vite → build/)
+        # `pnpm --filter micropolis run build` would also re-trigger the
+        # prebuild hook (re-running make install, already done above), so call
+        # vite directly instead -- same fix already proven for the Cloudflare
+        # deploy's build command.
+        run: pnpm --filter micropolis exec vite build
 
       - name: Assemble Pages output
         run: |
