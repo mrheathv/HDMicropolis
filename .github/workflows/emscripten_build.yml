@@ -74,13 +74,12 @@ jobs:
           emcc --version
           pnpm --filter @micropolis/engine-wasm run build
 
-      - name: Verify monorepo structure
-        run: pnpm run verify:structure
-
-      - name: Run Micropolis Vitest suite
-        run: pnpm --filter micropolis run test
-
       - name: Commit rebuilt engine artifacts
+        # Gated only on the build above, not on later/unrelated steps (e.g. the
+        # vitamoo/mooshow dist-file checks in the Vitest suite, which this
+        # workflow never builds) -- a custom `if:` implicitly ANDs success(),
+        # so placing this after Vitest meant a failing, unrelated test would
+        # silently skip the commit.
         if: ${{ inputs.commit_rebuilt_engine }}
         run: |
           git config user.name "github-actions[bot]"
@@ -96,6 +95,12 @@ jobs:
             git commit -m "Rebuild WASM engine artifacts (automated, workflow_dispatch)"
             git push origin HEAD:${{ github.ref_name }}
           fi
+
+      - name: Verify monorepo structure
+        run: pnpm run verify:structure
+
+      - name: Run Micropolis Vitest suite
+        run: pnpm --filter micropolis run test
 
       - name: Build optional Doxygen C++ API docs
         if: ${{ inputs.include_doxygen }}
