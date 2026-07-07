@@ -72,12 +72,18 @@ EMCXXFLAGS = \
     -std=c++17 \
 	-fPIC
 
+# TEXTDECODER=0: ALLOW_MEMORY_GROWTH makes wasmMemory's buffer a resizable
+# ArrayBuffer; recent Chrome/V8 reject TextDecoder.decode() on those, which
+# Emscripten's UTF8ToString/getStr call internally on every embind string
+# return (e.g. Micropolis::loadCity's filename). Forces the pure-JS fallback
+# string decoder instead, which works on any ArrayBuffer.
 EMLDFLAGS = \
     -s WASM=1 \
     -s MODULARIZE=1 \
     -s EXPORT_ES6=1 \
     -s 'ENVIRONMENT=web,worker,node' \
     -s ALLOW_MEMORY_GROWTH=1 \
+    -s TEXTDECODER=0 \
     -s 'EXPORTED_RUNTIME_METHODS=["HEAPU16","wasmMemory"]' \
     -s 'INCOMING_MODULE_JS_API=["wasmBinary","getPreloadedPackage","print","printErr","setStatus","locateFile","onRuntimeInitialized"]' \
 	-lembind \
