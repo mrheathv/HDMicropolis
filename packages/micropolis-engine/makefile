@@ -72,18 +72,24 @@ EMCXXFLAGS = \
     -std=c++17 \
 	-fPIC
 
-# TEXTDECODER=0: ALLOW_MEMORY_GROWTH makes wasmMemory's buffer a resizable
-# ArrayBuffer; recent Chrome/V8 reject TextDecoder.decode() on those, which
-# Emscripten's UTF8ToString/getStr call internally on every embind string
-# return (e.g. Micropolis::loadCity's filename). Forces the pure-JS fallback
-# string decoder instead, which works on any ArrayBuffer.
+# Fixed (non-growable) memory instead of ALLOW_MEMORY_GROWTH=1: a growable
+# WebAssembly.Memory's buffer is a *resizable* ArrayBuffer, and recent
+# Chrome/V8 reject TextDecoder.decode() on those -- which Emscripten's
+# UTF8ToString/getStr call internally on every embind string return (e.g.
+# Micropolis::loadCity's filename), crashing city loads. Tried working around
+# it with TEXTDECODER=0 (force the JS fallback decoder, never call
+# TextDecoder), but newer Emscripten (6.x) rejects that value outright
+# ("TEXTDECODER must be either 1 or 2"). This app's memory footprint is small
+# and bounded (120x100 tile map, a handful of small overlay buffers, ~850KB
+# of preloaded city files) so a large fixed size removes the resizable-buffer
+# problem at its source instead of chasing decoder heuristics across
+# Emscripten versions. 128MB is a very generous margin over actual usage.
 EMLDFLAGS = \
     -s WASM=1 \
     -s MODULARIZE=1 \
     -s EXPORT_ES6=1 \
     -s 'ENVIRONMENT=web,worker,node' \
-    -s ALLOW_MEMORY_GROWTH=1 \
-    -s TEXTDECODER=0 \
+    -s INITIAL_MEMORY=134217728 \
     -s 'EXPORTED_RUNTIME_METHODS=["HEAPU16","wasmMemory"]' \
     -s 'INCOMING_MODULE_JS_API=["wasmBinary","getPreloadedPackage","print","printErr","setStatus","locateFile","onRuntimeInitialized"]' \
 	-lembind \
