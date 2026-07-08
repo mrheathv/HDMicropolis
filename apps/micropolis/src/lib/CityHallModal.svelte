@@ -88,7 +88,7 @@
 				<label class="auto-budget">
 					<input
 						type="checkbox"
-						checked={micropolisReactive.attachedSimulator?.micropolis?.autoBudget ?? true}
+						checked={micropolisReactive.autoBudget}
 						onchange={toggleAutoBudget}
 					/>
 					Auto-budget (engine manages department funding)

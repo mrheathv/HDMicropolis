@@ -37,6 +37,7 @@ let simSpeed = $state(0);
 let simPasses = $state(1);
 let simPaused = $state(false);
 let cityTax = $state(0);
+let autoBudget = $state(true);
 let mapRevision = $state(0);
 let mapCameraRevision = $state(0);
 let budgetRevision = $state(0);
@@ -86,6 +87,7 @@ function syncFromEngine(): void {
 	simPasses = m.simPasses;
 	simPaused = m.simPaused;
 	cityTax = m.cityTax;
+	autoBudget = m.autoBudget;
 	cityPop = m.cityPop;
 	cityScore = m.cityScore;
 	cityTime = m.cityTime;
@@ -554,6 +556,19 @@ export const micropolisReactive = {
 		openBudget(): void {
 			requireMicropolis().doBudgetFromMenu();
 		},
+		/** Manual funding sliders (only meaningful while auto-budget is off). */
+		setRoadPercent(fraction: number): void {
+			requireMicropolis().roadPercent = fraction;
+			budgetRevision++;
+		},
+		setPolicePercent(fraction: number): void {
+			requireMicropolis().policePercent = fraction;
+			budgetRevision++;
+		},
+		setFirePercent(fraction: number): void {
+			requireMicropolis().firePercent = fraction;
+			budgetRevision++;
+		},
 		makeMonster(): void {
 			requireMicropolis().makeMonster();
 		},
@@ -632,6 +647,9 @@ export const micropolisReactive = {
 	},
 	get cityTax() {
 		return cityTax;
+	},
+	get autoBudget() {
+		return autoBudget;
 	},
 	get mapRevision() {
 		return mapRevision;

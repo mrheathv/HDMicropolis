@@ -304,6 +304,12 @@ export interface Micropolis extends ClassHandle {
   cityPopDelta: number;
   cityAssessedValue: number;
   cityScoreDelta: number;
+  roadPercent: number;
+  policePercent: number;
+  firePercent: number;
+  roadFund: number;
+  policeFund: number;
+  fireFund: number;
   trafficAverage: number;
   pollutionAverage: number;
   crimeAverage: number;
