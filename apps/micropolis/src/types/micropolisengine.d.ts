@@ -421,6 +421,9 @@ export interface Micropolis extends ClassHandle {
   updateGraphs(): void;
   updateEvaluation(): void;
   updateBudget(): void;
+  countProblems(): number;
+  getProblemNumber(_0: number): number;
+  getProblemVotes(_0: number): number;
   makeMeltdown(): void;
   makeFireBombs(): void;
   makeEarthquake(): void;

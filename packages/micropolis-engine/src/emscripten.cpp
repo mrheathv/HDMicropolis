@@ -1263,6 +1263,9 @@ function createTypedArrayFromMap(mapInstance) {
     .function("updateGraphs", &Micropolis::updateGraphs)
     .function("updateEvaluation", &Micropolis::updateEvaluation)
     .function("updateBudget", &Micropolis::updateBudget)
+    .function("countProblems", &Micropolis::countProblems)
+    .function("getProblemNumber", &Micropolis::getProblemNumber)
+    .function("getProblemVotes", &Micropolis::getProblemVotes)
 
     // Disasters
     .function("makeMeltdown", &Micropolis::makeMeltdown)

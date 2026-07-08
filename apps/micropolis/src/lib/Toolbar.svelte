@@ -7,6 +7,7 @@
 	import { citySelectState } from '$lib/CitySelectState.svelte';
 	import { overlayState } from '$lib/OverlayState.svelte';
 	import { disasterState } from '$lib/DisasterState.svelte';
+	import { evaluationState } from '$lib/EvaluationState.svelte';
 
 	function selectTool(id: ToolId) {
 		toolState.setActiveTool(id);
@@ -112,6 +113,14 @@
 			title="Unleash a disaster"
 		>
 			Disasters…
+		</button>
+		<button
+			type="button"
+			class="status-button"
+			onclick={() => evaluationState.toggle()}
+			title="View the city evaluation report"
+		>
+			Evaluation…
 		</button>
 
 		{#if toolState.lastToolFeedback}
