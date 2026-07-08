@@ -4,7 +4,6 @@
   import { getSharedSimulator, releaseSharedSimulator, MicropolisSimulator } from '$lib/MicropolisSimulator';
   import { micropolisReactive } from '$lib/MicropolisReactive.svelte';
   import TileView from '$lib/TileView.svelte';
-  import GameHud from '$lib/GameHud.svelte';
   import HelpModal from '$lib/HelpModal.svelte';
   import Toolbar from '$lib/Toolbar.svelte';
   import MessageOverlay from '$lib/MessageOverlay.svelte';
@@ -13,6 +12,7 @@
   import CityHallModal from '$lib/CityHallModal.svelte';
   import CitySelectModal from '$lib/CitySelectModal.svelte';
   import OverlayModal from '$lib/OverlayModal.svelte';
+  import DisasterModal from '$lib/DisasterModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -111,12 +111,12 @@
         presences={localCursorPresence}
         domFrameRects={domFrameRects}
       />
-      <GameHud />
       <ZoneStatusPanel />
       <BudgetModal />
       <CityHallModal />
       <CitySelectModal />
       <OverlayModal />
+      <DisasterModal />
       <HelpModal />
     </div>
 

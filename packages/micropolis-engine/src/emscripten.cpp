@@ -1105,6 +1105,7 @@ function createTypedArrayFromMap(mapInstance) {
     .function("setDoAnimation", &Micropolis::setDoAnimation)
     .function("doNewGame", &Micropolis::doNewGame)
     .function("doBudget", &Micropolis::doBudget)
+    .function("doBudgetFromMenu", &Micropolis::doBudgetFromMenu)
     .function("doScoreCard", &Micropolis::doScoreCard)
     .function("updateFunds", &Micropolis::updateFunds)
     .function("setPasses", &Micropolis::setPasses)
@@ -1269,6 +1270,8 @@ function createTypedArrayFromMap(mapInstance) {
     .function("makeEarthquake", &Micropolis::makeEarthquake)
     .function("makeFire", &Micropolis::makeFire)
     .function("makeFlood", &Micropolis::makeFlood)
+    .function("makeMonster", &Micropolis::makeMonster)
+    .function("makeTornado", &Micropolis::makeTornado)
     .function("setFire", &Micropolis::setFire)
     .function("fireBomb", &Micropolis::fireBomb)
 

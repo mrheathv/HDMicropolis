@@ -550,6 +550,28 @@ export const micropolisReactive = {
 			requireMicropolis().setAutoBudget(enabled);
 			syncFromEngine();
 		},
+		/** Opens the budget review on demand (works even with auto-budget on, unlike doBudget()). */
+		openBudget(): void {
+			requireMicropolis().doBudgetFromMenu();
+		},
+		makeMonster(): void {
+			requireMicropolis().makeMonster();
+		},
+		makeFire(): void {
+			requireMicropolis().makeFire();
+		},
+		makeFlood(): void {
+			requireMicropolis().makeFlood();
+		},
+		makeMeltdown(): void {
+			requireMicropolis().makeMeltdown();
+		},
+		makeTornado(): void {
+			requireMicropolis().makeTornado();
+		},
+		makeEarthquake(): void {
+			requireMicropolis().makeEarthquake();
+		},
 		/** After raw writes into `memory.mapU16`, bump observers. */
 		bumpMap(): void {
 			mapRevision++;

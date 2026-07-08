@@ -398,6 +398,7 @@ export interface Micropolis extends ClassHandle {
   setDoAnimation(_0: boolean): void;
   doNewGame(): void;
   doBudget(): void;
+  doBudgetFromMenu(): void;
   doScoreCard(): void;
   updateFunds(): void;
   setPasses(_0: number): void;
@@ -425,6 +426,8 @@ export interface Micropolis extends ClassHandle {
   makeEarthquake(): void;
   makeFire(): void;
   makeFlood(): void;
+  makeMonster(): void;
+  makeTornado(): void;
   setFire(): void;
   fireBomb(): void;
   sendMessage(_0: number, _1: number, _2: number, _3: boolean, _4: boolean): void;
