@@ -37,6 +37,11 @@
 	);
 	const taxLabel = $derived(`Tax ${micropolisReactive.cityTax}%`);
 
+	function togglePause() {
+		if (micropolisReactive.simPaused) micropolisReactive.poke.resume();
+		else micropolisReactive.poke.pause();
+	}
+
 	// Classic SimCity's RCI demand valves are clamped to ±1500 (see update.cpp).
 	const RCI_MAX = 1500;
 	const rciBars = $derived([
@@ -89,7 +94,15 @@
 		>
 			{taxLabel}
 		</button>
-		<div class="status-speed" class:paused={micropolisReactive.simPaused}>{simLabel}</div>
+		<button
+			type="button"
+			class="status-button status-speed"
+			class:paused={micropolisReactive.simPaused}
+			onclick={togglePause}
+			title={micropolisReactive.simPaused ? 'Resume the simulation' : 'Pause the simulation'}
+		>
+			{simLabel}
+		</button>
 		<button
 			type="button"
 			class="status-button"
