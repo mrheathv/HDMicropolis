@@ -36,6 +36,17 @@ export interface MapViewportConfig {
 	zoomMax?: number;
 	/** Extra zoom applied by Micropolis tile renderers (Canvas/WebGL use 4× for parity). */
 	screenZoomFactor?: number;
+	/**
+	 * World pixels per tile in the *engine's own sprite coordinate space*
+	 * (`SimSprite.x`/`y`, always 16px/tile in Micropolis -- see `<< 4` in
+	 * sprite.cpp) -- independent of `tileWidth`/`tileHeight`, which Micropolis
+	 * tile renderers keep at 1 (pan/zoom operate in tile-index units, scaled
+	 * separately via `screenZoomFactor`). Only `worldPixelToWorldTile`/
+	 * `worldTileToWorldPixel` (and anything built on them, e.g.
+	 * `worldPixelToScreen`) use this.
+	 */
+	spritePixelsPerTileX?: number;
+	spritePixelsPerTileY?: number;
 }
 
 /** 3×3 column-major affine: screen = matrix × [tileX, tileY, 1]ᵀ */

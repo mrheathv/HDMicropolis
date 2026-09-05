@@ -43,6 +43,14 @@ export class MapViewport {
 	/** Matches Canvas/WebGL tile renderers that pass `4 * zoom` into the software path. */
 	screenZoomFactor = 1;
 
+	/**
+	 * World pixels per tile in the engine's own sprite coordinate space --
+	 * see the doc comment on {@link MapViewportConfig.spritePixelsPerTileX}.
+	 * Defaults to Micropolis's fixed 16px/tile.
+	 */
+	spritePixelsPerTileX = 16;
+	spritePixelsPerTileY = 16;
+
 	configure(config: MapViewportConfig): void {
 		if (config.mapWidth !== undefined) this.mapWidth = config.mapWidth;
 		if (config.mapHeight !== undefined) this.mapHeight = config.mapHeight;
@@ -62,6 +70,8 @@ export class MapViewport {
 		if (config.zoomMin !== undefined) this.zoomMin = config.zoomMin;
 		if (config.zoomMax !== undefined) this.zoomMax = config.zoomMax;
 		if (config.screenZoomFactor !== undefined) this.screenZoomFactor = config.screenZoomFactor;
+		if (config.spritePixelsPerTileX !== undefined) this.spritePixelsPerTileX = config.spritePixelsPerTileX;
+		if (config.spritePixelsPerTileY !== undefined) this.spritePixelsPerTileY = config.spritePixelsPerTileY;
 	}
 
 	private effectiveZoom(): number {
@@ -145,12 +155,12 @@ export class MapViewport {
 
 	worldTileToWorldPixel(tile: Vec2): MutableVec2 {
 		const [tileX, tileY] = tile;
-		return [tileX * this.tileWidth, tileY * this.tileHeight];
+		return [tileX * this.spritePixelsPerTileX, tileY * this.spritePixelsPerTileY];
 	}
 
 	worldPixelToWorldTile(pixel: Vec2): MutableVec2 {
 		const [px, py] = pixel;
-		return [px / this.tileWidth, py / this.tileHeight];
+		return [px / this.spritePixelsPerTileX, py / this.spritePixelsPerTileY];
 	}
 
 	screenToWorldPixel(screen: Vec2): MutableVec2 {

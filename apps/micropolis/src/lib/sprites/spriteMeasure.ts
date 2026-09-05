@@ -9,12 +9,19 @@ import type {
 import { PROCEDURAL_SMOKE_PUFF } from './types';
 import { getManifest, smokePuffManifest } from './classicPack';
 
+// Manifest frame/measurement dimensions are in the engine's own sprite pixel
+// space (16 engine-pixels/tile, matching SimSprite.x/y -- e.g. monster.json's
+// 48px frameWidth is a 3-tile-wide sprite). Screen-pixels-per-engine-pixel is
+// screen-pixels-per-tile (zoom * screenZoomFactor) divided by
+// spritePixelsPerTileX/Y -- NOT viewport.tileWidth/tileHeight, which Micropolis
+// tile renderers keep at 1 for pan/zoom's own tile-index convention (see
+// TileRenderer.applyViewportScreenScale).
 function scaleX(viewport: MapViewport): number {
-	return viewport.zoom * viewport.tileWidth;
+	return (viewport.zoom * viewport.screenZoomFactor) / viewport.spritePixelsPerTileX;
 }
 
 function scaleY(viewport: MapViewport): number {
-	return viewport.zoom * viewport.tileHeight;
+	return (viewport.zoom * viewport.screenZoomFactor) / viewport.spritePixelsPerTileY;
 }
 
 function frameDef(manifest: ResolvedSpriteAtlas, frameIndex: number) {

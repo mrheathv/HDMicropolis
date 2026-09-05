@@ -47,7 +47,7 @@ describe('MapViewport', () => {
 		approx(tdy, 16 / v.zoom / v.tileHeight);
 	});
 
-	it('world-tile ↔ world-pixel uses tile dimensions', () => {
+	it('world-tile ↔ world-pixel uses the sprite pixel-per-tile size (default 16, matching the engine)', () => {
 		const v = make();
 		const [px, py] = v.worldTileToWorldPixel([3, 4]);
 		approx(px, 48);
@@ -55,6 +55,22 @@ describe('MapViewport', () => {
 		const tile = v.worldPixelToWorldTile([48, 64]);
 		approx(tile[0], 3);
 		approx(tile[1], 4);
+	});
+
+	it('world-pixel conversion stays correct even when tileWidth/tileHeight are 1 (the live pan/zoom convention)', () => {
+		// Regression test: Micropolis tile renderers keep tileWidth/tileHeight at
+		// 1 (pan/zoom is in tile-index units, scaled separately via
+		// screenZoomFactor -- see TileRenderer.applyViewportScreenScale). Engine
+		// sprite coordinates (SimSprite.x/y) are always in 16px/tile engine-pixel
+		// units regardless, so worldPixelToScreen must not derive that scale from
+		// tileWidth/tileHeight, or every disaster/vehicle sprite ends up placed
+		// ~16 tiles away from where it belongs (i.e. off-screen).
+		const v = make();
+		v.configure({ tileWidth: 1, tileHeight: 1 });
+		const spriteWorldPixel: [number, number] = [v.panX * 16, v.panY * 16]; // sprite sitting exactly on the pan anchor
+		const [sx, sy] = v.worldPixelToScreen(spriteWorldPixel);
+		approx(sx, v.screenWidth * v.screenAnchorX);
+		approx(sy, v.screenHeight * v.screenAnchorY);
 	});
 
 	it('matrix matches worldTileToScreen', () => {
