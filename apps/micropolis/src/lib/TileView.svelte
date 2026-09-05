@@ -82,6 +82,16 @@
   let screenPosDown: [number, number] = [0, 0];
   let tilePosDown: [number, number] = [0, 0];
   let panDown: [number, number] = [0, 0];
+  // Coalesce bursty input (mousemove during a drag, wheel ticks during a
+  // scroll gesture) to at most one render per animation frame. Each of these
+  // events was previously doing a full software-rasterizer redraw
+  // synchronously and un-throttled, so a high-frequency mouse/trackpad could
+  // queue up many more redraws per second than the display can even show,
+  // backing up the main thread into stutter.
+  let panRafId: number | null = null;
+  let pendingPanEvent: MouseEvent | null = null;
+  let wheelRafId: number | null = null;
+  let pendingZoomFactor = 1;
   let initialTouchX: number = 0;
   let initialTouchY: number = 0;
   let leftKeyDown = false;
@@ -118,14 +128,22 @@
 
   function handlePanMouseMove(event: MouseEvent): void {
     if (!tileRenderer || !panning || !panGrabWorld) return;
-    syncViewportScreenScale(tileRenderer, false);
-    screenPos = canvasOffsetFromEvent(event);
-    if (event.shiftKey !== shiftPanHeld) {
-      shiftPanHeld = event.shiftKey;
-    }
-    panToKeepWorldAtScreen(tileRenderer, panGrabWorld, screenPos);
-    syncCameraRevision();
-    render();
+    pendingPanEvent = event;
+    if (panRafId != null) return;
+    panRafId = requestAnimationFrame(() => {
+      panRafId = null;
+      const ev = pendingPanEvent;
+      pendingPanEvent = null;
+      if (!ev || !tileRenderer || !panning || !panGrabWorld) return;
+      syncViewportScreenScale(tileRenderer, false);
+      screenPos = canvasOffsetFromEvent(ev);
+      if (ev.shiftKey !== shiftPanHeld) {
+        shiftPanHeld = ev.shiftKey;
+      }
+      panToKeepWorldAtScreen(tileRenderer, panGrabWorld, screenPos);
+      syncCameraRevision();
+      render();
+    });
   }
 
   function stopPan(event?: MouseEvent): void {
@@ -134,6 +152,11 @@
     panning = false;
     panButton = null;
     panGrabWorld = null;
+    if (panRafId != null) {
+      cancelAnimationFrame(panRafId);
+      panRafId = null;
+    }
+    pendingPanEvent = null;
     window.removeEventListener('mousemove', handlePanMouseMove);
     window.removeEventListener('mouseup', stopPan);
     render();
@@ -720,14 +743,21 @@
     // This keeps the event from propagating to the page
     event.preventDefault();
     event.stopPropagation();
-    
+
     const delta = event.deltaY > 0 ? -wheelZoomScale : wheelZoomScale; // Change the multiplier as needed
-    const zoomFactor = 1 + delta; // Adjust the zoom factor based on the delta
-    //console.log('onwheel: event:', event, 'delta:', delta, 'zoomFactor:', zoomFactor);
-    
-    tileRenderer.zoomBy(zoomFactor);
-    
-    micropolisSimulator.render();
+    // Multiple wheel ticks can arrive before the next frame (trackpads in
+    // particular fire very rapidly); combine their multiplicative zoom
+    // factors and apply/render once per frame instead of once per tick.
+    pendingZoomFactor *= 1 + delta;
+    if (wheelRafId != null) return;
+    wheelRafId = requestAnimationFrame(() => {
+      wheelRafId = null;
+      const zoomFactor = pendingZoomFactor;
+      pendingZoomFactor = 1;
+      if (!tileRenderer || !micropolisSimulator) return;
+      tileRenderer.zoomBy(zoomFactor);
+      micropolisSimulator.render();
+    });
   }
 
   export function setTileSet(index: number) {
@@ -819,6 +849,15 @@
     
     stopAutoRepeat(null);
     stopKeyPanLoop();
+
+    if (panRafId != null) {
+      cancelAnimationFrame(panRafId);
+      panRafId = null;
+    }
+    if (wheelRafId != null) {
+      cancelAnimationFrame(wheelRafId);
+      wheelRafId = null;
+    }
 
     if (typeof window !== 'undefined') {
       window.removeEventListener('mousemove', handlePanMouseMove);
