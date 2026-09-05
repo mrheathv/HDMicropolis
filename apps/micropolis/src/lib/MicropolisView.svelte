@@ -15,6 +15,7 @@
   import DisasterModal from '$lib/DisasterModal.svelte';
   import EvaluationModal from '$lib/EvaluationModal.svelte';
   import HistoryModal from '$lib/HistoryModal.svelte';
+  import RCIModal from '$lib/RCIModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -121,6 +122,7 @@
       <DisasterModal />
       <EvaluationModal />
       <HistoryModal />
+      <RCIModal />
       <HelpModal />
     </div>
 

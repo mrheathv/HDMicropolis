@@ -9,6 +9,7 @@
 	import { disasterState } from '$lib/DisasterState.svelte';
 	import { evaluationState } from '$lib/EvaluationState.svelte';
 	import { historyState } from '$lib/HistoryState.svelte';
+	import { rciState } from '$lib/RCIState.svelte';
 
 	function selectTool(id: ToolId) {
 		toolState.setActiveTool(id);
@@ -71,7 +72,12 @@
 			{dateLabel} · {micropolisReactive.cityName || 'Micropolis'}
 		</button>
 
-		<div class="status-rci mp-well" title={rciTitle}>
+		<button
+			type="button"
+			class="status-rci mp-well"
+			title="{rciTitle} — click for the full RCI Demand chart"
+			onclick={() => rciState.toggle()}
+		>
 			{#each rciBars as bar (bar.key)}
 				<div class="rci-track">
 					<div class="rci-centerline"></div>
@@ -85,7 +91,7 @@
 				</div>
 				<span class="rci-letter rci-letter-{bar.key.toLowerCase()}">{bar.key}</span>
 			{/each}
-		</div>
+		</button>
 
 		<button
 			type="button"
@@ -249,8 +255,15 @@
 		display: flex;
 		align-items: flex-end;
 		gap: 0.3rem;
+		width: 100%;
 		padding: 0.15rem 0.1rem;
-		cursor: default;
+		margin: 0;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.status-rci:hover {
+		background: var(--mp-face);
 	}
 
 	.rci-track {
