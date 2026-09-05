@@ -40,14 +40,14 @@
 </script>
 
 {#if open}
-	<div class="help-backdrop" role="presentation" onclick={close}></div>
-	<div class="help-modal" role="dialog" aria-labelledby="help-title" aria-modal="true">
-		<header class="help-header">
+	<div class="mp-backdrop help-backdrop" role="presentation" onclick={close}></div>
+	<div class="mp-window help-modal" role="dialog" aria-labelledby="help-title" aria-modal="true">
+		<header class="mp-window-header help-header">
 			<h2 id="help-title">Keyboard shortcuts</h2>
-			<button type="button" class="help-close" onclick={close} aria-label="Close help">×</button>
+			<button type="button" class="mp-window-close" onclick={close} aria-label="Close help">×</button>
 		</header>
 
-		<div class="help-body">
+		<div class="mp-window-body help-body">
 			{#each HELP_SECTIONS as section (section.title)}
 				<section class="help-section">
 					<h3>{section.title}</h3>
@@ -63,7 +63,7 @@
 			{/each}
 		</div>
 
-		<p class="help-footer">
+		<p class="mp-window-footer help-footer">
 			Micropolis in WebAssembly — classic SimCity lineage, ported by Don Hopkins.
 			<a href="https://github.com/SimHacker/MicropolisCore" target="_blank" rel="noopener noreferrer"
 				>GitHub</a
@@ -74,10 +74,7 @@
 
 <style>
 	.help-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 45;
-		background: rgba(0, 0, 0, 0.5);
 	}
 
 	.help-modal {
@@ -90,41 +87,11 @@
 		max-height: min(80vh, 36rem);
 		display: flex;
 		flex-direction: column;
-		padding: 0;
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.82rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
 	.help-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.85rem 1rem 0.65rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.help-close {
-		width: 1.75rem;
-		height: 1.75rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 6px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1.1rem;
-		line-height: 1;
-		cursor: pointer;
+		padding: 0.5rem 0.6rem;
 	}
 
 	.help-body {
@@ -142,7 +109,7 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: #9cf59c;
+		color: var(--mp-muted-text);
 	}
 
 	.help-list {
@@ -163,34 +130,34 @@
 
 	dd {
 		margin: 0;
-		opacity: 0.92;
 		line-height: 1.35;
 	}
 
 	kbd {
 		display: inline-block;
 		min-width: 1.5rem;
-		padding: 0.12rem 0.35rem;
-		border: 1px solid rgba(255, 255, 255, 0.22);
-		border-radius: 4px;
-		background: rgba(255, 255, 255, 0.08);
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		padding: 0.1rem 0.35rem;
+		font-family: inherit;
 		font-size: 0.72rem;
-		font-weight: 600;
-		color: #ffc840;
+		font-weight: 700;
+		color: var(--mp-text);
+		background: var(--mp-face);
+		border: 2px solid var(--mp-border);
+		box-shadow:
+			inset 1px 1px 0 var(--mp-highlight),
+			inset -1px -1px 0 var(--mp-dark-shadow);
 		text-align: center;
 	}
 
 	.help-footer {
 		margin: 0;
 		padding: 0.55rem 1rem 0.85rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
 		font-size: 0.72rem;
 		line-height: 1.4;
-		opacity: 0.75;
+		color: var(--mp-muted-text);
 	}
 
 	.help-footer a {
-		color: #9ec5ff;
+		color: var(--mp-accent);
 	}
 </style>

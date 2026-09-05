@@ -64,20 +64,20 @@
 </script>
 
 {#if open}
-	<div class="cityselect-backdrop" role="presentation" onclick={close}></div>
-	<div class="cityselect-modal" role="dialog" aria-labelledby="cityselect-title" aria-modal="true">
-		<header class="cityselect-header">
+	<div class="mp-backdrop cityselect-backdrop" role="presentation" onclick={close}></div>
+	<div class="mp-window cityselect-modal" role="dialog" aria-labelledby="cityselect-title" aria-modal="true">
+		<header class="mp-window-header cityselect-header">
 			<h2 id="cityselect-title">Load a city</h2>
-			<button type="button" class="cityselect-close" onclick={close} aria-label="Close">×</button>
+			<button type="button" class="mp-window-close" onclick={close} aria-label="Close">×</button>
 		</header>
 
-		<div class="cityselect-body">
-			<button type="button" class="random-button" onclick={randomCity}>🎲 Random new city</button>
+		<div class="mp-window-body cityselect-body">
+			<button type="button" class="mp-button random-button" onclick={randomCity}>🎲 Random new city</button>
 
 			<h3>Scenarios</h3>
 			<div class="city-grid">
 				{#each SCENARIOS as scenario (scenario.file)}
-					<button type="button" class="city-button" onclick={() => load(scenario.file)}>
+					<button type="button" class="mp-button city-button" onclick={() => load(scenario.file)}>
 						<span class="city-name">{scenario.label}</span>
 						<span class="city-year">{scenario.year}</span>
 					</button>
@@ -87,7 +87,7 @@
 			<h3>Other maps</h3>
 			<div class="city-grid">
 				{#each otherMaps as map (map.file)}
-					<button type="button" class="city-button" onclick={() => load(map.file)}>
+					<button type="button" class="mp-button city-button" onclick={() => load(map.file)}>
 						<span class="city-name">{map.label}</span>
 					</button>
 				{/each}
@@ -98,10 +98,7 @@
 
 <style>
 	.cityselect-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 45;
-		background: rgba(0, 0, 0, 0.5);
 	}
 
 	.cityselect-modal {
@@ -114,41 +111,11 @@
 		max-height: min(80vh, 34rem);
 		display: flex;
 		flex-direction: column;
-		padding: 0;
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.82rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
 	.cityselect-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.85rem 1rem 0.65rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.cityselect-close {
-		width: 1.75rem;
-		height: 1.75rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 6px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1.1rem;
-		line-height: 1;
-		cursor: pointer;
+		padding: 0.5rem 0.6rem;
 	}
 
 	.cityselect-body {
@@ -162,7 +129,7 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: #9cf59c;
+		color: var(--mp-muted-text);
 	}
 
 	h3:first-of-type {
@@ -172,13 +139,7 @@
 	.random-button {
 		width: 100%;
 		padding: 0.5rem 0.75rem;
-		border-radius: 6px;
-		border: 1px solid rgba(140, 180, 255, 0.6);
-		background: rgba(80, 140, 255, 0.3);
-		color: inherit;
-		cursor: pointer;
-		font: inherit;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.city-grid {
@@ -193,25 +154,15 @@
 		align-items: flex-start;
 		gap: 0.1rem;
 		padding: 0.4rem 0.6rem;
-		border-radius: 6px;
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		background: rgba(255, 255, 255, 0.06);
-		color: inherit;
-		cursor: pointer;
-		font: inherit;
 		text-align: left;
 	}
 
-	.city-button:hover {
-		background: rgba(255, 255, 255, 0.14);
-	}
-
 	.city-name {
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.city-year {
 		font-size: 0.72rem;
-		opacity: 0.7;
+		color: var(--mp-muted-text);
 	}
 </style>

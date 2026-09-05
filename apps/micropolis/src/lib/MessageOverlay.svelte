@@ -36,17 +36,17 @@
 </script>
 
 {#if showAdvisor && richNotice}
-	<div class="advisor" class:important={micropolisReactive.messageImportant} role="alert">
-		<header class="advisor-header">
+	<div class="mp-window advisor" class:important={micropolisReactive.messageImportant} role="alert">
+		<header class="mp-window-header advisor-header">
 			<h3>{richNotice.title}</h3>
-			<button type="button" class="advisor-close" onclick={dismiss} aria-label="Dismiss">×</button>
+			<button type="button" class="mp-window-close" onclick={dismiss} aria-label="Dismiss">×</button>
 		</header>
 		<p class="advisor-body">{@html richNotice.description}</p>
 		<div class="advisor-actions">
 			{#if canLocate}
-				<button type="button" class="advisor-locate" onclick={locate}>Locate</button>
+				<button type="button" class="mp-button advisor-locate" onclick={locate}>Locate</button>
 			{/if}
-			<button type="button" class="advisor-dismiss" onclick={dismiss}>Dismiss</button>
+			<button type="button" class="mp-button advisor-dismiss" onclick={dismiss}>Dismiss</button>
 		</div>
 	</div>
 {/if}
@@ -70,27 +70,17 @@
 		right: 1rem;
 		z-index: 30;
 		width: min(20rem, 90vw);
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.18);
-		border-radius: 10px;
-		color: #eef2ff;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-family: var(--mp-font);
 		font-size: 0.8rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
-	.advisor.important {
-		border-color: rgba(255, 120, 80, 0.7);
-		box-shadow: 0 12px 40px rgba(120, 30, 0, 0.5);
+	.advisor.important .advisor-header {
+		background: var(--mp-danger-bg-hover);
 	}
 
 	.advisor-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		gap: 0.6rem;
-		padding: 0.65rem 0.75rem 0.5rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 0.4rem 0.5rem;
 	}
 
 	.advisor-header h3 {
@@ -101,28 +91,13 @@
 	}
 
 	.advisor.important .advisor-header h3 {
-		color: #ffb380;
-	}
-
-	.advisor-close {
-		flex-shrink: 0;
-		width: 1.4rem;
-		height: 1.4rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 5px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1rem;
-		line-height: 1;
-		cursor: pointer;
+		color: var(--mp-danger);
 	}
 
 	.advisor-body {
 		margin: 0;
 		padding: 0.6rem 0.75rem;
 		line-height: 1.4;
-		opacity: 0.92;
 	}
 
 	.advisor-actions {
@@ -135,17 +110,10 @@
 	.advisor-locate,
 	.advisor-dismiss {
 		padding: 0.3rem 0.65rem;
-		border-radius: 6px;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font: inherit;
-		cursor: pointer;
 	}
 
 	.advisor-dismiss {
-		background: rgba(80, 140, 255, 0.45);
-		border-color: rgba(140, 180, 255, 0.6);
+		font-weight: 700;
 	}
 
 	.message-bar {
@@ -159,10 +127,11 @@
 		width: 100%;
 		padding: 0 0.75rem;
 		box-sizing: border-box;
-		background: rgba(20, 24, 36, 0.94);
-		border-top: 1px solid rgba(255, 255, 255, 0.18);
-		color: #f5f5f5;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		background: var(--mp-face);
+		border-top: 2px solid var(--mp-border);
+		box-shadow: inset 0 1px 0 var(--mp-highlight);
+		color: var(--mp-text);
+		font-family: var(--mp-font);
 		font-size: 0.78rem;
 		line-height: 1.25;
 		text-align: center;
@@ -170,8 +139,7 @@
 	}
 
 	.message-bar.important {
-		border-top-color: rgba(255, 120, 80, 0.75);
-		background: rgba(48, 16, 12, 0.94);
+		background: var(--mp-danger-bg);
 	}
 
 	.message-text {
@@ -181,6 +149,6 @@
 	.coords {
 		flex: 0 0 auto;
 		font-size: 0.72rem;
-		color: #ffc840;
+		color: var(--mp-warn-text);
 	}
 </style>

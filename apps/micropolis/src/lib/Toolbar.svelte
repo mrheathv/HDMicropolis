@@ -64,20 +64,20 @@
 		<div class="status-funds">${funds.toLocaleString()}</div>
 		<button
 			type="button"
-			class="status-date-button"
+			class="mp-button status-date-button"
 			onclick={() => citySelectState.toggle()}
 			title="{dateLabel} · {micropolisReactive.cityName || 'Micropolis'} — click to load a different city"
 		>
 			{dateLabel} · {micropolisReactive.cityName || 'Micropolis'}
 		</button>
 
-		<div class="status-rci" title={rciTitle}>
+		<div class="status-rci mp-well" title={rciTitle}>
 			{#each rciBars as bar (bar.key)}
 				<div class="rci-track">
 					<div class="rci-centerline"></div>
 					<div
 						class="rci-fill"
-						style:background={bar.value < 0 ? '#ff5c5c' : bar.color}
+						style:background={bar.value < 0 ? '#c00000' : bar.color}
 						style:height="{barFillPercent(bar.value)}%"
 						style:bottom={bar.value >= 0 ? '50%' : null}
 						style:top={bar.value < 0 ? '50%' : null}
@@ -89,7 +89,7 @@
 
 		<button
 			type="button"
-			class="status-button"
+			class="mp-button status-button"
 			onclick={() => cityHallState.toggle()}
 			title="Open City Hall (tax rate, difficulty)"
 		>
@@ -97,7 +97,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button status-speed"
+			class="mp-button status-button status-speed"
 			class:paused={micropolisReactive.simPaused}
 			onclick={togglePause}
 			title={micropolisReactive.simPaused ? 'Resume the simulation' : 'Pause the simulation'}
@@ -106,7 +106,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button"
+			class="mp-button status-button"
 			onclick={() => overlayState.toggle()}
 			title="Open the Zoom overlay picker"
 		>
@@ -114,7 +114,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button"
+			class="mp-button status-button"
 			onclick={() => micropolisReactive.poke.openBudget()}
 			title="Review the city budget"
 		>
@@ -122,7 +122,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button status-button-danger"
+			class="mp-button mp-danger status-button status-button-danger"
 			onclick={() => disasterState.toggle()}
 			title="Unleash a disaster"
 		>
@@ -130,7 +130,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button"
+			class="mp-button status-button"
 			onclick={() => evaluationState.toggle()}
 			title="View the city evaluation report"
 		>
@@ -138,7 +138,7 @@
 		</button>
 		<button
 			type="button"
-			class="status-button"
+			class="mp-button status-button"
 			onclick={() => historyState.toggle()}
 			title="View the city history graphs"
 		>
@@ -193,18 +193,19 @@
 		padding: 0.35rem;
 		overflow-x: hidden;
 		overflow-y: auto;
-		background: rgba(24, 24, 42, 0.94);
+		background: var(--mp-face);
 		border: none;
-		border-right: 1px solid #5a5a78;
+		border-right: 2px solid var(--mp-border);
 		box-shadow:
-			inset -1px 0 0 rgba(255, 255, 255, 0.06),
+			inset -1px 0 0 var(--mp-shadow),
 			2px 0 10px rgba(0, 0, 0, 0.35);
-		font-family: ui-monospace, 'Chicago', 'Geneva', monospace;
+		color: var(--mp-text);
+		font-family: var(--mp-font);
 		-webkit-font-smoothing: antialiased;
 		text-rendering: optimizeLegibility;
 		contain: layout style;
 		scrollbar-width: thin;
-		scrollbar-color: #4a4a68 transparent;
+		scrollbar-color: var(--mp-shadow) transparent;
 	}
 
 	.status-panel {
@@ -214,14 +215,15 @@
 		width: 9.2rem;
 		padding: 0.1rem 0.1rem 0.5rem;
 		margin-bottom: 0.2rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		border-bottom: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 -1px 0 var(--mp-face-light);
 	}
 
 	.status-funds {
 		font-size: 0.85rem;
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-		color: #9cf59c;
+		color: var(--mp-money);
 	}
 
 	.status-date-button,
@@ -229,12 +231,6 @@
 		width: 100%;
 		margin: 0;
 		padding: 0.2rem 0.35rem;
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 4px;
-		background: rgba(255, 255, 255, 0.06);
-		color: #e8eeff;
-		cursor: pointer;
-		font: inherit;
 		font-size: 0.5rem;
 		font-variant-numeric: tabular-nums;
 		text-align: left;
@@ -242,23 +238,8 @@
 		word-break: break-word;
 	}
 
-	.status-date-button:hover,
-	.status-button:hover,
-	.status-date-button:focus-visible,
-	.status-button:focus-visible {
-		background: rgba(255, 255, 255, 0.14);
-		outline: none;
-	}
-
 	.status-button-danger {
-		border-color: rgba(255, 100, 100, 0.3);
-		color: #ffb3b3;
-	}
-
-	.status-button-danger:hover,
-	.status-button-danger:focus-visible {
-		background: rgba(220, 70, 70, 0.28);
-		border-color: rgba(255, 120, 120, 0.6);
+		font-weight: 700;
 	}
 
 	.status-rci {
@@ -273,8 +254,8 @@
 		position: relative;
 		width: 0.6rem;
 		height: 1.6rem;
-		background: rgba(255, 255, 255, 0.08);
-		border-radius: 2px;
+		background: var(--mp-face);
+		border: 1px solid var(--mp-shadow);
 		overflow: hidden;
 	}
 
@@ -284,7 +265,7 @@
 		right: 0;
 		top: 50%;
 		height: 1px;
-		background: rgba(255, 255, 255, 0.35);
+		background: var(--mp-dark-shadow);
 	}
 
 	.rci-fill {
@@ -303,34 +284,31 @@
 		margin-right: 0;
 	}
 
-	/* Match Micropolis's classic R/C/I identity colors (green/blue/yellow). */
+	/* Match Micropolis's classic R/C/I identity colors (green/blue/yellow),
+	   darkened a touch here so the letters stay legible on the light face. */
 	.rci-letter-r {
-		color: #00c000;
+		color: #007000;
 	}
 
 	.rci-letter-c {
-		color: #4db0ff;
+		color: #0048b0;
 	}
 
 	.rci-letter-i {
-		color: #ffc800;
-	}
-
-	.status-speed {
-		font-size: 0.5rem;
-		color: #dce4f8;
+		color: #9c7800;
 	}
 
 	.status-speed.paused {
-		color: #ffb347;
+		color: var(--mp-warn-text);
 	}
 
 	.status-feedback {
 		padding-top: 0.25rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.15);
+		border-top: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 1px 0 var(--mp-face-light);
 		font-size: 0.5rem;
-		font-weight: 600;
-		color: #ffc840;
+		font-weight: 700;
+		color: var(--mp-warn-text);
 	}
 
 	.tool-group-label {
@@ -339,13 +317,13 @@
 		font-weight: 700;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
-		color: #8a92b0;
+		color: var(--mp-muted-text);
 		user-select: none;
 	}
 
 	.tool-group-label:not(:first-child) {
 		margin-top: 0.15rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		border-top: 1px solid var(--mp-shadow);
 		padding-top: 0.4rem;
 	}
 
@@ -364,13 +342,14 @@
 		gap: 0.2rem;
 		width: 4.4rem;
 		padding: 0.25rem 0.15rem 0.3rem;
-		border: 1px solid transparent;
-		border-radius: 5px;
-		background: rgba(255, 255, 255, 0.04);
+		border: 2px solid var(--mp-border);
+		background: var(--mp-face);
+		box-shadow:
+			inset 1px 1px 0 var(--mp-highlight),
+			inset -1px -1px 0 var(--mp-dark-shadow);
 		cursor: pointer;
 		box-sizing: border-box;
 		outline: none;
-		transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 	}
 
 	.tool-icon-frame {
@@ -382,7 +361,6 @@
 	.tool-icon {
 		width: 100%;
 		height: 100%;
-		border-radius: 4px;
 		image-rendering: pixelated;
 		pointer-events: none;
 		user-select: none;
@@ -394,7 +372,7 @@
 		bottom: 1px;
 		padding: 0 0.2rem;
 		border-radius: 2px;
-		background: rgba(8, 8, 16, 0.8);
+		background: rgba(0, 0, 0, 0.75);
 		color: #ffe566;
 		font-size: 0.52rem;
 		font-weight: 700;
@@ -405,7 +383,7 @@
 
 	.tool-label {
 		width: 100%;
-		color: #d8dcf0;
+		color: var(--mp-text);
 		font-size: 0.5rem;
 		font-weight: 500;
 		line-height: 1.2;
@@ -416,18 +394,18 @@
 	}
 
 	.tool-item:hover {
-		background: rgba(46, 46, 80, 0.85);
-		border-color: rgba(138, 184, 255, 0.4);
+		background: var(--mp-face-light);
 	}
 
 	.tool-item.active {
-		background: #304878;
-		border-color: #8ab8ff;
-		box-shadow: 0 0 0 1px rgba(138, 184, 255, 0.5), 0 1px 4px rgba(0, 0, 0, 0.4);
+		background: var(--mp-accent);
+		box-shadow:
+			inset 1px 1px 0 var(--mp-dark-shadow),
+			inset -1px -1px 0 var(--mp-highlight);
 	}
 
 	.tool-item.active .tool-label {
-		color: #fff;
+		color: var(--mp-accent-text);
 		font-weight: 700;
 	}
 </style>

@@ -45,16 +45,16 @@
 </script>
 
 {#if open}
-	<div class="cityhall-backdrop" role="presentation" onclick={close}></div>
-	<div class="cityhall-modal" role="dialog" aria-labelledby="cityhall-title" aria-modal="true">
-		<header class="cityhall-header">
+	<div class="mp-backdrop cityhall-backdrop" role="presentation" onclick={close}></div>
+	<div class="mp-window cityhall-modal" role="dialog" aria-labelledby="cityhall-title" aria-modal="true">
+		<header class="mp-window-header cityhall-header">
 			<h2 id="cityhall-title">City Hall</h2>
-			<button type="button" class="cityhall-close" onclick={close} aria-label="Close City Hall">×</button>
+			<button type="button" class="mp-window-close" onclick={close} aria-label="Close City Hall">×</button>
 		</header>
 
-		<div class="cityhall-body">
+		<div class="mp-window-body cityhall-body">
 			<section class="cityhall-section">
-				<label class="cityhall-label" for="tax-rate">
+				<label class="mp-label cityhall-label" for="tax-rate">
 					Property tax rate <span class="cityhall-value">{taxRate}%</span>
 				</label>
 				<input
@@ -69,13 +69,13 @@
 			</section>
 
 			<section class="cityhall-section">
-				<span class="cityhall-label">Difficulty</span>
+				<span class="mp-label">Difficulty</span>
 				<div class="difficulty-buttons">
 					{#each DIFFICULTY_LABELS as label, level}
 						<button
 							type="button"
-							class="difficulty-button"
-							class:active={gameLevel === level}
+							class="mp-button difficulty-button"
+							class:mp-selected={gameLevel === level}
 							onclick={() => setDifficulty(level)}
 						>
 							{label}
@@ -100,10 +100,7 @@
 
 <style>
 	.cityhall-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 45;
-		background: rgba(0, 0, 0, 0.5);
 	}
 
 	.cityhall-modal {
@@ -113,41 +110,11 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		width: min(22rem, 92vw);
-		padding: 0;
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.82rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
 	.cityhall-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.85rem 1rem 0.65rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.cityhall-close {
-		width: 1.75rem;
-		height: 1.75rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 6px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1.1rem;
-		line-height: 1;
-		cursor: pointer;
+		padding: 0.5rem 0.6rem;
 	}
 
 	.cityhall-body {
@@ -161,17 +128,17 @@
 	.cityhall-label {
 		display: flex;
 		justify-content: space-between;
-		font-weight: 600;
 		margin-bottom: 0.4rem;
 	}
 
 	.cityhall-value {
 		font-variant-numeric: tabular-nums;
-		color: #9cf59c;
+		color: var(--mp-money);
 	}
 
 	input[type='range'] {
 		width: 100%;
+		accent-color: var(--mp-accent);
 	}
 
 	.difficulty-buttons {
@@ -182,17 +149,6 @@
 	.difficulty-button {
 		flex: 1;
 		padding: 0.35rem 0.5rem;
-		border-radius: 6px;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		cursor: pointer;
-		font: inherit;
-	}
-
-	.difficulty-button.active {
-		background: rgba(80, 140, 255, 0.45);
-		border-color: rgba(140, 180, 255, 0.6);
 	}
 
 	.auto-budget {

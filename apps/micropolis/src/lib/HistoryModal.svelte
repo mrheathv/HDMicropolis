@@ -80,7 +80,7 @@
 		ctx.fillRect(0, 0, w, h);
 
 		// Gridlines (quarters of the timeline).
-		ctx.strokeStyle = '#c0c0c0';
+		ctx.strokeStyle = '#a0a0a0';
 		ctx.lineWidth = 1;
 		for (let g = 0; g <= 4; g++) {
 			const x = (g / 4) * w;
@@ -155,15 +155,15 @@
 </script>
 
 {#if open}
-	<div class="history-backdrop" role="presentation" onclick={close}></div>
-	<div class="history-modal" role="dialog" aria-labelledby="history-title" aria-modal="true">
-		<header class="history-header">
+	<div class="mp-backdrop history-backdrop" role="presentation" onclick={close}></div>
+	<div class="mp-window history-modal" role="dialog" aria-labelledby="history-title" aria-modal="true">
+		<header class="mp-window-header history-header">
 			<h2 id="history-title">History Graphs</h2>
-			<button type="button" class="history-close" onclick={close} aria-label="Close">×</button>
+			<button type="button" class="mp-window-close" onclick={close} aria-label="Close">×</button>
 		</header>
 
-		<div class="history-body">
-			<canvas bind:this={canvasEl} width="380" height="220" class="history-canvas"></canvas>
+		<div class="mp-window-body history-body">
+			<canvas bind:this={canvasEl} width="380" height="220" class="history-canvas mp-well"></canvas>
 
 			<div class="history-side">
 				<div class="history-legend">
@@ -197,10 +197,7 @@
 
 <style>
 	.history-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 45;
-		background: rgba(0, 0, 0, 0.5);
 	}
 
 	.history-modal {
@@ -210,41 +207,11 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		width: min(34rem, 94vw);
-		padding: 0;
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.82rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
 	.history-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.85rem 1rem 0.65rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.history-close {
-		width: 1.75rem;
-		height: 1.75rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 6px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1.1rem;
-		line-height: 1;
-		cursor: pointer;
+		padding: 0.5rem 0.6rem;
 	}
 
 	.history-body {
@@ -255,7 +222,6 @@
 
 	.history-canvas {
 		flex: 0 0 auto;
-		border-radius: 4px;
 		image-rendering: pixelated;
 	}
 
@@ -276,7 +242,8 @@
 
 	.history-scale {
 		padding-top: 0.75rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		border-top: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 1px 0 var(--mp-face-light);
 	}
 
 	.history-item {
@@ -291,7 +258,6 @@
 		display: inline-block;
 		width: 0.7rem;
 		height: 0.7rem;
-		border-radius: 2px;
-		border: 1px solid rgba(255, 255, 255, 0.3);
+		border: 1px solid var(--mp-border);
 	}
 </style>

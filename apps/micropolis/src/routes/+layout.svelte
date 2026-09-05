@@ -1,4 +1,6 @@
 <script lang="ts">
+	import '$lib/classicTheme.css';
+
 	let { children } = $props();
 
 	// TODO(virtual-cursor): PointerGrabToggle + pointer store → CursorLayer on map routes.

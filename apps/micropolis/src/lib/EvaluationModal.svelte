@@ -86,47 +86,47 @@
 </script>
 
 {#if open && snapshot}
-	<div class="eval-backdrop" role="presentation" onclick={close}></div>
-	<div class="eval-modal" role="dialog" aria-labelledby="eval-title" aria-modal="true">
-		<header class="eval-header">
+	<div class="mp-backdrop eval-backdrop" role="presentation" onclick={close}></div>
+	<div class="mp-window eval-modal" role="dialog" aria-labelledby="eval-title" aria-modal="true">
+		<header class="mp-window-header eval-header">
 			<h2 id="eval-title">City Evaluation</h2>
-			<button type="button" class="eval-close" onclick={close} aria-label="Close">×</button>
+			<button type="button" class="mp-window-close" onclick={close} aria-label="Close">×</button>
 		</header>
 
-		<div class="eval-body">
+		<div class="mp-window-body eval-body">
 			<div class="eval-grid">
 				<div class="eval-stat">
-					<span class="eval-label">Population</span>
+					<span class="mp-label">Population</span>
 					<span class="eval-value">{snapshot.population.toLocaleString()}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">Migration</span>
+					<span class="mp-label">Migration</span>
 					<span class="eval-value">{formatSigned(snapshot.migration)}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">City Value</span>
+					<span class="mp-label">City Value</span>
 					<span class="eval-value">${snapshot.assessedValue.toLocaleString()}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">Category</span>
+					<span class="mp-label">Category</span>
 					<span class="eval-value">{snapshot.category}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">Game Level</span>
+					<span class="mp-label">Game Level</span>
 					<span class="eval-value">{snapshot.gameLevel}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">Current Score</span>
+					<span class="mp-label">Current Score</span>
 					<span class="eval-value">{snapshot.currentScore}</span>
 				</div>
 				<div class="eval-stat">
-					<span class="eval-label">Annual Change</span>
+					<span class="mp-label">Annual Change</span>
 					<span class="eval-value">{formatSigned(snapshot.annualChange)}</span>
 				</div>
 			</div>
 
 			<div class="eval-section">
-				<span class="eval-label">Popularity</span>
+				<span class="mp-label">Popularity</span>
 				<div class="eval-popularity">
 					<span class="approve">Approve: {snapshot.approve}%</span>
 					<span class="disapprove">Disapprove: {100 - snapshot.approve}%</span>
@@ -134,7 +134,7 @@
 			</div>
 
 			<div class="eval-section">
-				<span class="eval-label">Top Problems</span>
+				<span class="mp-label">Top Problems</span>
 				{#if snapshot.problems.length === 0}
 					<p class="eval-noproblems">None reported.</p>
 				{:else}
@@ -151,10 +151,7 @@
 
 <style>
 	.eval-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 45;
-		background: rgba(0, 0, 0, 0.5);
 	}
 
 	.eval-modal {
@@ -167,41 +164,11 @@
 		max-height: min(85vh, 36rem);
 		display: flex;
 		flex-direction: column;
-		padding: 0;
-		background: rgba(8, 12, 20, 0.97);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.82rem;
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 
 	.eval-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.85rem 1rem 0.65rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.eval-close {
-		width: 1.75rem;
-		height: 1.75rem;
-		padding: 0;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 6px;
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		font-size: 1.1rem;
-		line-height: 1;
-		cursor: pointer;
+		padding: 0.5rem 0.6rem;
 	}
 
 	.eval-body {
@@ -222,44 +189,37 @@
 		gap: 0.15rem;
 	}
 
-	.eval-label {
-		font-size: 0.68rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: #9aa4c8;
-	}
-
 	.eval-value {
-		font-weight: 600;
+		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-		color: #eef2ff;
+		color: var(--mp-text);
 	}
 
 	.eval-section {
 		margin-top: 0.9rem;
 		padding-top: 0.7rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		border-top: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 1px 0 var(--mp-face-light);
 	}
 
 	.eval-popularity {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 0.3rem;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.approve {
-		color: #9cf59c;
+		color: var(--mp-money);
 	}
 
 	.disapprove {
-		color: #ff8080;
+		color: var(--mp-danger);
 	}
 
 	.eval-noproblems {
 		margin: 0.3rem 0 0;
-		opacity: 0.7;
+		color: var(--mp-muted-text);
 	}
 
 	.eval-problems {
@@ -275,12 +235,12 @@
 		display: flex;
 		justify-content: space-between;
 		padding: 0.3rem 0.5rem;
-		border-radius: 5px;
-		background: rgba(255, 255, 255, 0.05);
-		font-weight: 600;
+		font-weight: 700;
+		background: var(--mp-face-light);
+		border: 1px solid var(--mp-shadow);
 	}
 
 	.eval-problems li span:last-child {
-		color: #ffc840;
+		color: var(--mp-warn-text);
 	}
 </style>

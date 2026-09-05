@@ -15,7 +15,7 @@
 		<div class="zone-header">
 			<span class="zone-title">Zone query</span>
 			<span class="zone-tile">Tile {zs.x}, {zs.y}</span>
-			<button type="button" class="zone-close" onclick={close}>Close</button>
+			<button type="button" class="mp-button zone-close" onclick={close}>Close</button>
 		</div>
 		<dl class="zone-stats">
 			<div class="stat">
@@ -58,10 +58,11 @@
 		gap: 0.35rem;
 		padding: 0.45rem 0.65rem 0.5rem;
 		box-sizing: border-box;
-		background: rgba(8, 12, 20, 0.94);
-		border-top: 1px solid rgba(255, 255, 255, 0.16);
-		color: #eef2ff;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		background: var(--mp-face);
+		border-top: 2px solid var(--mp-border);
+		box-shadow: inset 0 1px 0 var(--mp-highlight);
+		color: var(--mp-text);
+		font-family: var(--mp-font);
 		font-size: 0.72rem;
 		pointer-events: auto;
 	}
@@ -80,27 +81,17 @@
 	}
 
 	.zone-tile {
-		color: #ffc840;
+		color: var(--mp-warn-text);
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
 
 	.zone-close {
-		border: 1px solid rgba(255, 255, 255, 0.25);
-		border-radius: 4px;
-		background: rgba(255, 255, 255, 0.08);
-		color: #eef2ff;
-		font: inherit;
 		font-size: 0.68rem;
-		font-weight: 600;
+		font-weight: 700;
 		line-height: 1;
 		padding: 0.28rem 0.55rem;
-		cursor: pointer;
 		white-space: nowrap;
-	}
-
-	.zone-close:hover {
-		background: rgba(255, 255, 255, 0.16);
 	}
 
 	.zone-stats {
@@ -120,7 +111,7 @@
 
 	dt {
 		margin: 0;
-		opacity: 0.72;
+		color: var(--mp-muted-text);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -129,7 +120,7 @@
 	dd {
 		margin: 0;
 		font-variant-numeric: tabular-nums;
-		font-weight: 600;
+		font-weight: 700;
 		text-align: right;
 	}
 </style>

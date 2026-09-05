@@ -1,0 +1,166 @@
+/*
+ * Shared "classic" chrome theme -- a light beveled gray Mac/Motif look,
+ * matching the original Unix SimCity Classic / Micropolis UI (see the
+ * reference screenshot discussed in this session): flat gray panels,
+ * black outlines, and hard raised/inset 3D bevels instead of the
+ * translucent dark glass look this UI started with.
+ *
+ * Loaded once from src/routes/+layout.svelte as a plain (unscoped)
+ * stylesheet, so these classes apply globally. Individual components add
+ * them alongside their own scoped class names and keep only
+ * layout-specific rules (flex/grid/spacing) in their own <style> blocks.
+ */
+
+:root {
+	--mp-face: #c8c8c8;
+	--mp-face-light: #d8d8d8;
+	--mp-header: #9c9c9c;
+	--mp-highlight: #ffffff;
+	--mp-shadow: #808080;
+	--mp-dark-shadow: #404040;
+	--mp-border: #000000;
+	--mp-text: #000000;
+	--mp-muted-text: #454545;
+	--mp-accent: #00008b;
+	--mp-accent-text: #ffffff;
+	--mp-money: #005a00;
+	--mp-warn-text: #7a4a00;
+	--mp-danger: #8b0000;
+	--mp-danger-bg: #e8caca;
+	--mp-danger-bg-hover: #dcb0b0;
+	--mp-font: 'Chicago', 'Geneva', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---- Window chrome ------------------------------------------------- */
+
+.mp-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+}
+
+.mp-window {
+	background: var(--mp-face);
+	border: 2px solid var(--mp-border);
+	border-radius: 0;
+	color: var(--mp-text);
+	font-family: var(--mp-font);
+	box-shadow:
+		inset 1px 1px 0 var(--mp-highlight),
+		inset -1px -1px 0 var(--mp-dark-shadow),
+		0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.mp-window-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	background: var(--mp-header);
+	color: var(--mp-text);
+	border-bottom: 2px solid var(--mp-border);
+	box-shadow: inset 0 1px 0 var(--mp-highlight);
+}
+
+.mp-window-header h2 {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+.mp-window-close {
+	flex-shrink: 0;
+	width: 1.5rem;
+	height: 1.5rem;
+	padding: 0;
+	background: var(--mp-face);
+	color: var(--mp-text);
+	font: inherit;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+	border: 2px solid var(--mp-border);
+	box-shadow:
+		inset 1px 1px 0 var(--mp-highlight),
+		inset -1px -1px 0 var(--mp-dark-shadow);
+}
+
+.mp-window-close:active {
+	box-shadow:
+		inset 1px 1px 0 var(--mp-dark-shadow),
+		inset -1px -1px 0 var(--mp-highlight);
+}
+
+.mp-window-body {
+	color: var(--mp-text);
+}
+
+.mp-window-footer {
+	border-top: 2px solid var(--mp-shadow);
+	box-shadow: inset 0 1px 0 var(--mp-face-light);
+}
+
+/* ---- Buttons --------------------------------------------------------- */
+
+.mp-button {
+	border: 2px solid var(--mp-border);
+	box-shadow:
+		inset 1px 1px 0 var(--mp-highlight),
+		inset -1px -1px 0 var(--mp-dark-shadow);
+	background: var(--mp-face);
+	color: var(--mp-text);
+	font: inherit;
+	cursor: pointer;
+}
+
+.mp-button:hover {
+	background: var(--mp-face-light);
+}
+
+.mp-button:active,
+.mp-button.mp-pressed {
+	box-shadow:
+		inset 1px 1px 0 var(--mp-dark-shadow),
+		inset -1px -1px 0 var(--mp-highlight);
+}
+
+/* A selected/active option -- the classic dark-blue highlight. */
+.mp-button.mp-selected {
+	background: var(--mp-accent);
+	color: var(--mp-accent-text);
+	box-shadow:
+		inset 1px 1px 0 var(--mp-dark-shadow),
+		inset -1px -1px 0 var(--mp-highlight);
+}
+
+.mp-button.mp-danger {
+	background: var(--mp-danger-bg);
+	color: var(--mp-danger);
+}
+
+.mp-button.mp-danger:hover {
+	background: var(--mp-danger-bg-hover);
+}
+
+/* ---- Text helpers ------------------------------------------------- */
+
+.mp-label {
+	font-size: 0.68rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--mp-muted-text);
+}
+
+.mp-money {
+	color: var(--mp-money);
+}
+
+.mp-well {
+	background: var(--mp-face-light);
+	border: 2px solid var(--mp-border);
+	box-shadow:
+		inset 1px 1px 0 var(--mp-dark-shadow),
+		inset -1px -1px 0 var(--mp-highlight);
+}

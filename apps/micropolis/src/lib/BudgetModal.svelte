@@ -49,8 +49,8 @@
 </script>
 
 {#if open}
-	<div class="budget-backdrop" role="presentation" onclick={dismiss}></div>
-	<div class="budget-modal" role="dialog" aria-labelledby="budget-title" aria-modal="true">
+	<div class="mp-backdrop budget-backdrop" role="presentation" onclick={dismiss}></div>
+	<div class="mp-window budget-modal" role="dialog" aria-labelledby="budget-title" aria-modal="true">
 		<h2 id="budget-title">City budget</h2>
 		<p class="budget-copy">
 			End-of-year budget review. Accept to apply the current budget plan and continue the simulation.
@@ -88,18 +88,15 @@
 		{/if}
 
 		<div class="budget-actions">
-			<button type="button" onclick={dismiss}>Later</button>
-			<button type="button" class="primary" onclick={accept}>Accept budget</button>
+			<button type="button" class="mp-button" onclick={dismiss}>Later</button>
+			<button type="button" class="mp-button primary" onclick={accept}>Accept budget</button>
 		</div>
 	</div>
 {/if}
 
 <style>
 	.budget-backdrop {
-		position: fixed;
-		inset: 0;
 		z-index: 40;
-		background: rgba(0, 0, 0, 0.45);
 	}
 	.budget-modal {
 		position: fixed;
@@ -109,10 +106,6 @@
 		transform: translate(-50%, -50%);
 		width: min(22rem, 92vw);
 		padding: 1rem 1.1rem;
-		background: rgba(8, 12, 20, 0.96);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		border-radius: 10px;
-		color: #eef2ff;
 		font-size: 0.85rem;
 	}
 	h2 {
@@ -121,7 +114,7 @@
 	}
 	.budget-copy {
 		margin: 0 0 0.75rem;
-		opacity: 0.9;
+		color: var(--mp-muted-text);
 		line-height: 1.4;
 	}
 	.auto-budget {
@@ -136,13 +129,15 @@
 		gap: 0.6rem;
 		margin: 0.75rem 0 1rem;
 		padding-top: 0.75rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		border-top: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 1px 0 var(--mp-face-light);
 	}
 	.fund-lines-unavailable {
 		margin: 0.75rem 0 1rem;
 		padding-top: 0.75rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.12);
-		opacity: 0.7;
+		border-top: 2px solid var(--mp-shadow);
+		box-shadow: inset 0 1px 0 var(--mp-face-light);
+		color: var(--mp-muted-text);
 		font-size: 0.8rem;
 	}
 	.fund-line-header {
@@ -153,26 +148,21 @@
 		font-variant-numeric: tabular-nums;
 	}
 	.fund-line-value {
-		color: #9cf59c;
+		color: var(--mp-money);
 	}
 	.fund-line input[type='range'] {
 		width: 100%;
+		accent-color: var(--mp-accent);
 	}
 	.budget-actions {
 		display: flex;
 		justify-content: flex-end;
 		gap: 0.5rem;
 	}
-	button {
+	.budget-actions button {
 		padding: 0.35rem 0.75rem;
-		border-radius: 6px;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.08);
-		color: inherit;
-		cursor: pointer;
 	}
-	button.primary {
-		background: rgba(80, 140, 255, 0.45);
-		border-color: rgba(140, 180, 255, 0.6);
+	.primary {
+		font-weight: 700;
 	}
 </style>
