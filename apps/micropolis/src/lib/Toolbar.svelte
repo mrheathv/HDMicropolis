@@ -8,6 +8,7 @@
 	import { overlayState } from '$lib/OverlayState.svelte';
 	import { disasterState } from '$lib/DisasterState.svelte';
 	import { evaluationState } from '$lib/EvaluationState.svelte';
+	import { historyState } from '$lib/HistoryState.svelte';
 
 	function selectTool(id: ToolId) {
 		toolState.setActiveTool(id);
@@ -134,6 +135,14 @@
 			title="View the city evaluation report"
 		>
 			Evaluation…
+		</button>
+		<button
+			type="button"
+			class="status-button"
+			onclick={() => historyState.toggle()}
+			title="View the city history graphs"
+		>
+			History…
 		</button>
 
 		{#if toolState.lastToolFeedback}

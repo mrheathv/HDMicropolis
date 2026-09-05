@@ -425,6 +425,7 @@ export interface Micropolis extends ClassHandle {
   setFunds(_0: number): void;
   updateMaps(): void;
   updateGraphs(): void;
+  getHistory(_0: HistoryType, _1: HistoryScale, _2: number): number;
   updateEvaluation(): void;
   updateBudget(): void;
   countProblems(): number;

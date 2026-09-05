@@ -14,6 +14,7 @@
   import OverlayModal from '$lib/OverlayModal.svelte';
   import DisasterModal from '$lib/DisasterModal.svelte';
   import EvaluationModal from '$lib/EvaluationModal.svelte';
+  import HistoryModal from '$lib/HistoryModal.svelte';
   import SoftwareSpriteLayer from '$lib/sprites/SoftwareSpriteLayer.svelte';
   import { triggerSkywriting, toggleSkywritingPilot } from '$lib/sprites/plugins/skywriting/SkywritingPlugin.svelte';
   import CursorLayer from '$lib/input/CursorLayer.svelte';
@@ -119,6 +120,7 @@
       <OverlayModal />
       <DisasterModal />
       <EvaluationModal />
+      <HistoryModal />
       <HelpModal />
     </div>
 
