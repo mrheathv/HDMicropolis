@@ -38,21 +38,14 @@
 
 	function readSeries(type: number): number[] {
 		const m = micropolisReactive.attachedSimulator?.micropolis;
-		const eng = micropolisReactive.wasmModule;
-		if (!m || !eng) return new Array(HISTORY_COUNT).fill(0);
-		const historyType = [
-			eng.HistoryType.HISTORY_TYPE_RES,
-			eng.HistoryType.HISTORY_TYPE_COM,
-			eng.HistoryType.HISTORY_TYPE_IND,
-			eng.HistoryType.HISTORY_TYPE_MONEY,
-			eng.HistoryType.HISTORY_TYPE_CRIME,
-			eng.HistoryType.HISTORY_TYPE_POLLUTION
-		][type];
-		const historyScale = scale === 0 ? eng.HistoryScale.HISTORY_SCALE_SHORT : eng.HistoryScale.HISTORY_SCALE_LONG;
+		if (!m) return new Array(HISTORY_COUNT).fill(0);
+		// getHistory's C++ signature takes plain ints (historyType, historyScale),
+		// not the wrapped embind enum objects -- HistoryType/HistoryScale's members
+		// already line up numerically with SERIES' type indices and our 0/1 scale.
 		const values: number[] = [];
 		try {
 			for (let i = 0; i < HISTORY_COUNT; i++) {
-				values.push(m.getHistory(historyType, historyScale, i));
+				values.push(m.getHistory(type, scale, i));
 			}
 		} catch {
 			// Older engine build without the getHistory binding -- flat line rather than a crash.
