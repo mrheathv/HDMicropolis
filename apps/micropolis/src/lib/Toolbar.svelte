@@ -268,8 +268,8 @@
 
 	.rci-track {
 		position: relative;
-		width: 0.6rem;
-		height: 1.6rem;
+		width: 0.8rem;
+		height: 2.1rem;
 		background: var(--mp-face);
 		border: 1px solid var(--mp-shadow);
 		overflow: hidden;
@@ -292,7 +292,7 @@
 
 	.rci-letter {
 		font-weight: 700;
-		font-size: 0.5rem;
+		font-size: 0.58rem;
 		margin-right: 0.3rem;
 	}
 
