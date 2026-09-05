@@ -208,8 +208,9 @@ export class MicropolisSimulator {
     
         if (this.tickIntervalId !== null) {
             clearInterval(this.tickIntervalId);
+            this.tickIntervalId = null;
         }
-    
+
         if (fps <= 0) {
           return;
         }

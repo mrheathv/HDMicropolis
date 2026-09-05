@@ -504,11 +504,21 @@ export const micropolisReactive = {
 			syncFromEngine();
 		},
 		pause(): void {
+			// Micropolis::pause() only sets simSpeed=0, which correctly freezes
+			// the engine's own zone/traffic/growth simulation -- but our JS tick
+			// loop (MicropolisSimulator's setInterval) doesn't read that at all,
+			// and keeps calling animateTiles() every interval regardless, so
+			// traffic lights/water/fire/power-blink all kept animating with the
+			// city sitting there "Paused". Stop that loop too.
 			requireMicropolis().pause();
+			// attachedSimulator may be a minimal test double without this method
+			// (only micropolis/micropolisengine/mapData/mopData) -- guard the call.
+			attachedSimulator?.setPaused?.(true);
 			syncFromEngine();
 		},
 		resume(): void {
 			requireMicropolis().resume();
+			attachedSimulator?.setPaused?.(false);
 			syncFromEngine();
 		},
 		doTool(tool: EditingTool, x: number, y: number): ToolResult {
