@@ -1243,6 +1243,8 @@ function createTypedArrayFromMap(mapInstance) {
                 o.set("y", s->y);
                 o.set("xHot", s->xHot);
                 o.set("yHot", s->yHot);
+                o.set("xOffset", s->xOffset);
+                o.set("yOffset", s->yOffset);
                 arr.set(i++, o);
             }
         }
