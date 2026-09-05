@@ -174,6 +174,9 @@
 						<span class="tool-key">{tool.shortcut}</span>
 					</span>
 					<span class="tool-label">{tool.label}</span>
+					{#if tool.cost > 0}
+						<span class="tool-cost">${tool.cost.toLocaleString()}</span>
+					{/if}
 				</button>
 			{/each}
 		</div>
@@ -393,6 +396,16 @@
 		user-select: none;
 	}
 
+	.tool-cost {
+		width: 100%;
+		color: var(--mp-money);
+		font-size: 0.46rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+		text-align: center;
+		user-select: none;
+	}
+
 	.tool-item:hover {
 		background: var(--mp-face-light);
 	}
@@ -407,5 +420,9 @@
 	.tool-item.active .tool-label {
 		color: var(--mp-accent-text);
 		font-weight: 700;
+	}
+
+	.tool-item.active .tool-cost {
+		color: var(--mp-accent-text);
 	}
 </style>
