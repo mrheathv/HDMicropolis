@@ -5,6 +5,12 @@ import {
 	type TileAtlas,
 } from '@micropolis/render-core';
 
+// How long each phase of the unpowered-zone blink lasts. Matches the classic
+// engine's own ~0.5s blinkFlag cadence (see Micropolis::blinkFlag in
+// micropolis.cpp) -- driven by wall clock here rather than sim ticks so it
+// keeps blinking at a steady rate regardless of game speed or pause state.
+const POWER_BLINK_INTERVAL_MS = 500;
+
 class CanvasTileRenderer extends TileRenderer<CanvasRenderingContext2D> {
 	private atlases: Array<TileAtlas | null> = [];
 	private vignetteGradient: CanvasGradient | null = null;
@@ -73,7 +79,8 @@ class CanvasTileRenderer extends TileRenderer<CanvasRenderingContext2D> {
 		});
 
 		this.context.imageSmoothingEnabled = !['pixel', 'nearest'].includes(atlas.sampling ?? 'pixel');
-		const image = renderMicropolisMapSoftware(description, this.mapData, atlas, this.mopData);
+		const powerBlinkOn = Math.floor(Date.now() / POWER_BLINK_INTERVAL_MS) % 2 === 0;
+		const image = renderMicropolisMapSoftware(description, this.mapData, atlas, this.mopData, powerBlinkOn);
 		const pixels = new Uint8ClampedArray(image.data);
 		this.context.putImageData(new ImageData(pixels, image.width, image.height), 0, 0);
 		this.drawVignette();

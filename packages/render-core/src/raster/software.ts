@@ -42,6 +42,15 @@ export interface TileAtlas {
 // Micropolis stores rendering flags in the high bits of each map cell; the low
 // 10 bits are the actual tile index. This matches the classic TileBits.MASK.
 const TILE_ID_MASK = 0x03ff;
+// bit 15: tile currently has power. bit 10: tile is a zone's center tile.
+// Mirrors PWRBIT/ZONEBIT in packages/micropolis-engine/src/tool.h.
+const PWRBIT = 0x8000;
+const ZONEBIT = 0x0400;
+// The classic "lightning bolt" glyph the original engine reserved for
+// signaling an unpowered zone (see LIGHTNINGBOLT in micropolis.h) but never
+// actually drew -- that substitution was always meant to happen here, at
+// draw time, not by rewriting the map data.
+const LIGHTNINGBOLT_TILE_ID = 827;
 
 function clampInt(value: number, min: number, max: number): number {
 	return Math.max(min, Math.min(max, Math.floor(value)));
@@ -58,7 +67,15 @@ export function renderMicropolisMapSoftware(
 	description: MicropolisMapRenderDescription,
 	mapData: Uint16Array,
 	atlas: TileAtlas,
-	mopData?: Uint16Array
+	mopData?: Uint16Array,
+	/**
+	 * Current phase of the unpowered-zone blink. Callers doing a live/animated
+	 * render should flip this on a wall-clock timer (independent of sim speed --
+	 * classic Micropolis blinks this at a fixed rate whether paused or not) and
+	 * re-render; omit for one-shot/static exports to always show the zone's
+	 * normal tile, unaffected by power state.
+	 */
+	powerBlinkOn?: boolean
 ): RgbaImage {
 	const width = description.output.width;
 	const height = description.output.height;
@@ -113,7 +130,8 @@ export function renderMicropolisMapSoftware(
 			const logicalTilePixelX = ((Math.floor(worldXPixels) % tileWidth) + tileWidth) % tileWidth;
 			const cellIndex = mapIndex(tileX, tileY, mapHeight);
 			const tileValue = mapData[cellIndex] ?? 0;
-			const tileId = tileValue & TILE_ID_MASK;
+			const unpowered = (tileValue & ZONEBIT) !== 0 && (tileValue & PWRBIT) === 0;
+			const tileId = powerBlinkOn && unpowered ? LIGHTNINGBOLT_TILE_ID : tileValue & TILE_ID_MASK;
 			const tileSet = (mopData?.[cellIndex] ?? 0) & 0xff;
 			// The atlas is a regular grid of tiles. Tile id N maps to row/column by
 			// the atlas tile count per row, then the intra-tile pixel offset selects
