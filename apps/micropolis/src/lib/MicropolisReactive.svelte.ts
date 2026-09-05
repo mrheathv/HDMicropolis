@@ -50,6 +50,9 @@ let messageX = $state(0);
 let messageY = $state(0);
 let messagePicture = $state(false);
 let messageImportant = $state(false);
+/** Bumped on every sendMessage call, even repeats of the same index -- lets consumers
+ *  tell "a new occurrence of this message" apart from "still showing the last one". */
+let messageRevision = $state(0);
 
 let budgetModalRequested = $state(false);
 
@@ -177,6 +180,7 @@ class MicropolisReactiveCallback {
 		messageY = y;
 		messagePicture = picture;
 		messageImportant = important;
+		messageRevision++;
 	}
 
 	showBudgetAndWait(_micropolis: Micropolis | null, _callbackVal: unknown): void {
@@ -597,6 +601,15 @@ export const micropolisReactive = {
 		mapPanHandler = handler;
 	},
 
+	/**
+	 * Jump the camera to a tile -- the engine's own doAutoGoto()/autoGoto callback
+	 * plumbing works end-to-end, but the C++ side never actually calls doAutoGoto()
+	 * anywhere, so this drives the same registered pan handler directly instead.
+	 */
+	panToTile(x: number, y: number): void {
+		mapPanHandler?.(x, y);
+	},
+
 	clearBudgetModalRequest(): void {
 		budgetModalRequested = false;
 	},
@@ -683,6 +696,9 @@ export const micropolisReactive = {
 	},
 	get messageImportant() {
 		return messageImportant;
+	},
+	get messageRevision() {
+		return messageRevision;
 	},
 	get budgetModalRequested() {
 		return budgetModalRequested;
