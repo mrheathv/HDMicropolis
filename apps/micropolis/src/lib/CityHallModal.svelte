@@ -30,6 +30,11 @@
 		micropolisReactive.poke.setAutoBudget(checked);
 	}
 
+	function toggleAutoBulldoze(event: Event) {
+		const checked = (event.target as HTMLInputElement).checked;
+		micropolisReactive.poke.setAutoBulldoze(checked);
+	}
+
 	onMount(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (!open) return;
@@ -92,6 +97,17 @@
 						onchange={toggleAutoBudget}
 					/>
 					Auto-budget (engine manages department funding)
+				</label>
+			</section>
+
+			<section class="cityhall-section">
+				<label class="auto-budget">
+					<input
+						type="checkbox"
+						checked={micropolisReactive.autoBulldoze}
+						onchange={toggleAutoBulldoze}
+					/>
+					Auto Bulldoze (clear trees/rubble automatically, for a fee)
 				</label>
 			</section>
 		</div>

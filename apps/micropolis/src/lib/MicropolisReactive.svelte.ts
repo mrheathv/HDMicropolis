@@ -38,6 +38,7 @@ let simPasses = $state(1);
 let simPaused = $state(false);
 let cityTax = $state(0);
 let autoBudget = $state(true);
+let autoBulldoze = $state(true);
 let mapRevision = $state(0);
 let mapCameraRevision = $state(0);
 let budgetRevision = $state(0);
@@ -91,6 +92,7 @@ function syncFromEngine(): void {
 	simPaused = m.simPaused;
 	cityTax = m.cityTax;
 	autoBudget = m.autoBudget;
+	autoBulldoze = m.autoBulldoze;
 	cityPop = m.cityPop;
 	cityScore = m.cityScore;
 	cityTime = m.cityTime;
@@ -556,6 +558,10 @@ export const micropolisReactive = {
 			requireMicropolis().setAutoBudget(enabled);
 			syncFromEngine();
 		},
+		setAutoBulldoze(enabled: boolean): void {
+			requireMicropolis().setAutoBulldoze(enabled);
+			syncFromEngine();
+		},
 		/** Opens the budget review on demand (works even with auto-budget on, unlike doBudget()). */
 		openBudget(): void {
 			requireMicropolis().doBudgetFromMenu();
@@ -663,6 +669,9 @@ export const micropolisReactive = {
 	},
 	get autoBudget() {
 		return autoBudget;
+	},
+	get autoBulldoze() {
+		return autoBulldoze;
 	},
 	get mapRevision() {
 		return mapRevision;
