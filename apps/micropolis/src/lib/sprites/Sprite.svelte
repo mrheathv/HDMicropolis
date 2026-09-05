@@ -16,6 +16,17 @@
 	const frame = $derived(
 		manifest?.frames.find((f) => f.index === instance.frame) ?? manifest?.frames[0],
 	);
+	// Prefer the manifest's declared real sheet width; a manifest's frame list
+	// isn't guaranteed to span the actual image exactly (train.json names
+	// fewer frames than its sheet has; other manifests have named more than
+	// theirs does), so deriving background-size from frames[].atlas.x can
+	// make it narrower or wider than the real image -- which stretches and
+	// then (since background-repeat isn't none) tiles it instead of cleanly
+	// cropping to one frame.
+	const sheetWidth = $derived(
+		manifest?.sheetWidth ??
+			(manifest ? Math.max(0, ...manifest.frames.map((f) => f.atlas.x)) + manifest.frameWidth : 0),
+	);
 	const isSmoke = $derived(instance.manifestId === PROCEDURAL_SMOKE_PUFF);
 </script>
 
@@ -42,10 +53,7 @@
 			style:background-position="-{(frame?.atlas.x ?? 0) *
 				(layout.bounds.w / manifest.frameWidth)}px -{(frame?.atlas.y ?? 0) *
 				(layout.bounds.h / manifest.frameHeight)}px"
-			style:background-size="{manifest.frames.length > 0
-				? (manifest.frames[manifest.frames.length - 1].atlas.x + manifest.frameWidth) *
-					(layout.bounds.w / manifest.frameWidth)
-				: layout.bounds.w}px {layout.bounds.h}px"
+			style:background-size="{sheetWidth * (layout.bounds.w / manifest.frameWidth)}px {(manifest.sheetHeight ?? manifest.frameHeight) * (layout.bounds.h / manifest.frameHeight)}px"
 			style:opacity={instance.opacity ?? 1}
 			style:z-index={instance.zIndex ?? 10}
 			style:transform={instance.heading != null
@@ -62,6 +70,9 @@
 		position: absolute;
 		pointer-events: none;
 		image-rendering: pixelated;
+	}
+	.sprite-sheet {
+		background-repeat: no-repeat;
 	}
 	.sprite-smoke {
 		border-radius: 50%;

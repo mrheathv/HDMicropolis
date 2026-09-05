@@ -22,6 +22,17 @@ export interface SpriteAtlasManifest {
 	sheet?: string;
 	frameWidth: number;
 	frameHeight: number;
+	/**
+	 * Real pixel dimensions of the sheet image named by `sheet`. Required for
+	 * correct CSS background-size math in Sprite.svelte -- inferring it from
+	 * frames[].atlas.x is unsafe: a manifest's frame list doesn't have to name
+	 * every frame the sheet contains (or, if a frame list runs past the
+	 * sheet's real edge, it doesn't have to stay within it either), so a
+	 * frame-derived width can end up narrower or wider than the actual image
+	 * and cause it to be scaled and tiled instead of cropped to one frame.
+	 */
+	sheetWidth?: number;
+	sheetHeight?: number;
 	frames: SpriteFrameDef[];
 	/** Default measurements when a frame omits them. */
 	defaultMeasurements?: Record<string, SpriteMeasurementDef>;
