@@ -20,6 +20,13 @@ export interface SpriteAtlasManifest {
 	/** C++ SimSprite.type when sourced from engine; omitted for plugin-only sprites. */
 	engineType?: number;
 	sheet?: string;
+	/**
+	 * Sprite footprint in the engine's own sprite-pixel space (16 engine-px/
+	 * tile, matches SimSprite.x/y) -- this is what spriteMeasure.ts uses to
+	 * size the sprite's drawn footprint on the map, and it must NOT change
+	 * just because a higher-resolution sheet image is swapped in, or the
+	 * sprite would render at the wrong world size.
+	 */
 	frameWidth: number;
 	frameHeight: number;
 	/**
@@ -33,6 +40,16 @@ export interface SpriteAtlasManifest {
 	 */
 	sheetWidth?: number;
 	sheetHeight?: number;
+	/**
+	 * Raw pixel size of one frame cell in the sheet image, for the
+	 * atlas.x/atlas.y addressing math -- decoupled from frameWidth/frameHeight
+	 * so an upscaled sheet (e.g. a 4x xBRZ placeholder HD atlas) can be
+	 * addressed in its own raw-pixel coordinates while frameWidth/frameHeight
+	 * keep describing the unchanged world footprint. Defaults to
+	 * frameWidth/frameHeight when the sheet is authored 1:1 with engine pixels.
+	 */
+	atlasFrameWidth?: number;
+	atlasFrameHeight?: number;
 	frames: SpriteFrameDef[];
 	/** Default measurements when a frame omits them. */
 	defaultMeasurements?: Record<string, SpriteMeasurementDef>;

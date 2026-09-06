@@ -8,22 +8,26 @@ import monster from './manifests/classic/monster.json';
 import tornado from './manifests/classic/tornado.json';
 import explosion from './manifests/classic/explosion.json';
 
-import sheetAirplane from '$lib/images/tilesets/classic-sprite-plane.png';
-import sheetHelicopter from '$lib/images/tilesets/classic-sprite-chopper.png';
-import sheetTrain from '$lib/images/tilesets/classic-sprite-train.png';
-import sheetShip from '$lib/images/tilesets/classic-sprite-ship.png';
-import sheetMonster from '$lib/images/tilesets/classic-sprite-monster.png';
-import sheetTornado from '$lib/images/tilesets/classic-sprite-tornado.png';
-import sheetExplosion from '$lib/images/tilesets/classic-sprite-explode.png';
+// 4x xBRZ-upscaled placeholder HD sprite sheets (see tools/tileset-upscale) --
+// same algorithmic-upscale approach as the all-hd4x.png tile atlas. Manifests
+// reference these by their -hd4x.png names; frame/atlas coordinates in the
+// JSON are scaled to match (see each manifest's frameWidth/sheetWidth).
+import sheetAirplane from '$lib/images/tilesets/classic-sprite-plane-hd4x.png';
+import sheetHelicopter from '$lib/images/tilesets/classic-sprite-chopper-hd4x.png';
+import sheetTrain from '$lib/images/tilesets/classic-sprite-train-hd4x.png';
+import sheetShip from '$lib/images/tilesets/classic-sprite-ship-hd4x.png';
+import sheetMonster from '$lib/images/tilesets/classic-sprite-monster-hd4x.png';
+import sheetTornado from '$lib/images/tilesets/classic-sprite-tornado-hd4x.png';
+import sheetExplosion from '$lib/images/tilesets/classic-sprite-explode-hd4x.png';
 
 const SHEET_URLS: Record<string, string> = {
-	'classic-sprite-plane.png': sheetAirplane,
-	'classic-sprite-chopper.png': sheetHelicopter,
-	'classic-sprite-train.png': sheetTrain,
-	'classic-sprite-ship.png': sheetShip,
-	'classic-sprite-monster.png': sheetMonster,
-	'classic-sprite-tornado.png': sheetTornado,
-	'classic-sprite-explode.png': sheetExplosion,
+	'classic-sprite-plane-hd4x.png': sheetAirplane,
+	'classic-sprite-chopper-hd4x.png': sheetHelicopter,
+	'classic-sprite-train-hd4x.png': sheetTrain,
+	'classic-sprite-ship-hd4x.png': sheetShip,
+	'classic-sprite-monster-hd4x.png': sheetMonster,
+	'classic-sprite-tornado-hd4x.png': sheetTornado,
+	'classic-sprite-explode-hd4x.png': sheetExplosion,
 };
 
 const CLASSIC_MANIFESTS: SpriteAtlasManifest[] = [

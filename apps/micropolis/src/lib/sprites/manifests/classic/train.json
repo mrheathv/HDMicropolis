@@ -2,11 +2,13 @@
   "schema_version": 1,
   "id": "train",
   "engineType": 1,
-  "sheet": "classic-sprite-train.png",
+  "sheet": "classic-sprite-train-hd4x.png",
   "frameWidth": 32,
   "frameHeight": 32,
-  "sheetWidth": 288,
-  "sheetHeight": 32,
+  "sheetWidth": 1152,
+  "sheetHeight": 128,
+  "atlasFrameWidth": 128,
+  "atlasFrameHeight": 128,
   "defaultMeasurements": {
     "hotspot": {
       "kind": "attachment",
@@ -25,21 +27,21 @@
     {
       "index": 2,
       "atlas": {
-        "x": 64,
+        "x": 256,
         "y": 0
       }
     },
     {
       "index": 3,
       "atlas": {
-        "x": 32,
+        "x": 128,
         "y": 0
       }
     },
     {
       "index": 4,
       "atlas": {
-        "x": 96,
+        "x": 384,
         "y": 0
       }
     },

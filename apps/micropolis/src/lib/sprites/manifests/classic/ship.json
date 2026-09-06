@@ -2,11 +2,13 @@
   "schema_version": 1,
   "id": "ship",
   "engineType": 4,
-  "sheet": "classic-sprite-ship.png",
+  "sheet": "classic-sprite-ship-hd4x.png",
   "frameWidth": 48,
   "frameHeight": 48,
-  "sheetWidth": 384,
-  "sheetHeight": 48,
+  "sheetWidth": 1536,
+  "sheetHeight": 192,
+  "atlasFrameWidth": 192,
+  "atlasFrameHeight": 192,
   "defaultMeasurements": {
     "hotspot": {
       "kind": "attachment",
@@ -25,49 +27,49 @@
     {
       "index": 1,
       "atlas": {
-        "x": 48,
+        "x": 192,
         "y": 0
       }
     },
     {
       "index": 2,
       "atlas": {
-        "x": 96,
+        "x": 384,
         "y": 0
       }
     },
     {
       "index": 3,
       "atlas": {
-        "x": 144,
+        "x": 576,
         "y": 0
       }
     },
     {
       "index": 4,
       "atlas": {
-        "x": 192,
+        "x": 768,
         "y": 0
       }
     },
     {
       "index": 5,
       "atlas": {
-        "x": 240,
+        "x": 960,
         "y": 0
       }
     },
     {
       "index": 6,
       "atlas": {
-        "x": 288,
+        "x": 1152,
         "y": 0
       }
     },
     {
       "index": 7,
       "atlas": {
-        "x": 336,
+        "x": 1344,
         "y": 0
       }
     }

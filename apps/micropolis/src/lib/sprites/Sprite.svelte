@@ -23,9 +23,16 @@
 	// make it narrower or wider than the real image -- which stretches and
 	// then (since background-repeat isn't none) tiles it instead of cleanly
 	// cropping to one frame.
+	// atlasFrameWidth/Height are the raw pixel size of a frame cell in the
+	// sheet -- separate from frameWidth/frameHeight (the sprite's unchanged
+	// world footprint) so an upscaled sheet (e.g. the 4x xBRZ placeholder HD
+	// atlases) can be addressed by its own pixel grid without inflating how
+	// big the sprite is drawn on the map.
+	const atlasFrameWidth = $derived(manifest?.atlasFrameWidth ?? manifest?.frameWidth ?? 0);
+	const atlasFrameHeight = $derived(manifest?.atlasFrameHeight ?? manifest?.frameHeight ?? 0);
 	const sheetWidth = $derived(
 		manifest?.sheetWidth ??
-			(manifest ? Math.max(0, ...manifest.frames.map((f) => f.atlas.x)) + manifest.frameWidth : 0),
+			(manifest ? Math.max(0, ...manifest.frames.map((f) => f.atlas.x)) + atlasFrameWidth : 0),
 	);
 	const isSmoke = $derived(instance.manifestId === PROCEDURAL_SMOKE_PUFF);
 </script>
@@ -51,9 +58,9 @@
 			style:height="{layout.bounds.h}px"
 			style:background-image="url({manifest.sheetUrl})"
 			style:background-position="-{(frame?.atlas.x ?? 0) *
-				(layout.bounds.w / manifest.frameWidth)}px -{(frame?.atlas.y ?? 0) *
-				(layout.bounds.h / manifest.frameHeight)}px"
-			style:background-size="{sheetWidth * (layout.bounds.w / manifest.frameWidth)}px {(manifest.sheetHeight ?? manifest.frameHeight) * (layout.bounds.h / manifest.frameHeight)}px"
+				(layout.bounds.w / atlasFrameWidth)}px -{(frame?.atlas.y ?? 0) *
+				(layout.bounds.h / atlasFrameHeight)}px"
+			style:background-size="{sheetWidth * (layout.bounds.w / atlasFrameWidth)}px {(manifest.sheetHeight ?? atlasFrameHeight) * (layout.bounds.h / atlasFrameHeight)}px"
 			style:opacity={instance.opacity ?? 1}
 			style:z-index={instance.zIndex ?? 10}
 			style:transform={instance.heading != null

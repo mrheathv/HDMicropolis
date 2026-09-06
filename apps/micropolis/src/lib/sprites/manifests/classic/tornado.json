@@ -2,11 +2,13 @@
   "schema_version": 1,
   "id": "tornado",
   "engineType": 6,
-  "sheet": "classic-sprite-tornado.png",
+  "sheet": "classic-sprite-tornado-hd4x.png",
   "frameWidth": 48,
   "frameHeight": 48,
-  "sheetWidth": 144,
-  "sheetHeight": 48,
+  "sheetWidth": 576,
+  "sheetHeight": 192,
+  "atlasFrameWidth": 192,
+  "atlasFrameHeight": 192,
   "defaultMeasurements": {
     "hotspot": {
       "kind": "attachment",
@@ -25,14 +27,14 @@
     {
       "index": 1,
       "atlas": {
-        "x": 48,
+        "x": 192,
         "y": 0
       }
     },
     {
       "index": 2,
       "atlas": {
-        "x": 96,
+        "x": 384,
         "y": 0
       }
     }
