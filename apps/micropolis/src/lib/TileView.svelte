@@ -72,6 +72,24 @@
   let panButton = $state<number | null>(null);
   let panGrabWorld: [number, number] | null = null;
   let toolDragging = false;
+
+  // Touch: one finger pans (or taps to apply the active tool if it didn't
+  // move far/long enough to read as a drag); two fingers pinch-zoom around
+  // their midpoint. No gesture library -- same ad-hoc approach as the mouse
+  // pan above (see MapGestureController TODO up top for the eventual
+  // unified replacement).
+  let touchMode: 'pan' | 'pinch' | null = null;
+  let touchGrabWorld: [number, number] | null = null;
+  let touchStartScreen: [number, number] = [0, 0];
+  let touchStartTime = 0;
+  let touchMoved = false;
+  let pinchStartDistance = 0;
+  let pinchStartZoom = 1;
+  let pinchCenterWorld: [number, number] | null = null;
+  let touchRafId: number | null = null;
+  let pendingTouchEvent: TouchEvent | null = null;
+  const TOUCH_TAP_SLOP_PX = 12;
+  const TOUCH_TAP_MAX_MS = 350;
   // Future drawing autoscroll should be time-driven/world-tile based; pan autoscroll runs the opposite direction.
   let lastAppliedToolTile: [number, number] | null = null;
   let shiftPanHeld = $state(false);
@@ -92,8 +110,6 @@
   let pendingPanEvent: MouseEvent | null = null;
   let wheelRafId: number | null = null;
   let pendingZoomFactor = 1;
-  let initialTouchX: number = 0;
-  let initialTouchY: number = 0;
   let leftKeyDown = false;
   let rightKeyDown = false;
   let upKeyDown = false;
@@ -362,6 +378,11 @@
 
     if (typeof window != "undefined") {
       canvasGL.addEventListener('wheel', onwheel, {passive: false});
+      // Bound imperatively (not as an ontouchstart= template attribute) for
+      // the same reason as wheel above: Svelte registers template-bound
+      // touchstart/wheel handlers as passive, which silently breaks
+      // event.preventDefault() inside them.
+      canvasGL.addEventListener('touchstart', handleTouchStart, { passive: false });
     }
 
     isMounted = true;
@@ -785,22 +806,129 @@
     }
   }
 
-  function handleTouchStart(event: TouchEvent) {
-    const touch = event.touches[0];
-    initialTouchX = touch.clientX;
-    initialTouchY = touch.clientY;
-    console.log(`MicropolisView: handleTouchStart: event: ${event} initialTouchX": ${initialTouchX} initialTouchY: ${initialTouchY}`);
+  function touchOffset(touch: Touch): [number, number] {
+    if (!canvasGL) return [0, 0];
+    const rect = canvasGL.getBoundingClientRect();
+    return [touch.clientX - rect.left, touch.clientY - rect.top];
   }
 
-  function handleTouchMove(event: TouchEvent) {
-    const touch = event.touches[0];
-    const deltaX = touch.clientX - initialTouchX;
-    const deltaY = touch.clientY - initialTouchY;
-    console.log(`MicropolisView: handleTouchMove: event: ${event} deltaX": ${deltaX} deltaY: ${deltaY}`);
+  function touchMidpoint(a: [number, number], b: [number, number]): [number, number] {
+    return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
   }
 
-  function handleTouchEnd(event: TouchEvent) {
-    console.log(`MicropolisView: handleTouchEnd: event: ${event}`);
+  function touchDistance(a: [number, number], b: [number, number]): number {
+    return Math.hypot(a[0] - b[0], a[1] - b[1]);
+  }
+
+  function resetTouchState(): void {
+    touchMode = null;
+    touchGrabWorld = null;
+    pinchCenterWorld = null;
+    if (touchRafId != null) {
+      cancelAnimationFrame(touchRafId);
+      touchRafId = null;
+    }
+    pendingTouchEvent = null;
+  }
+
+  function startTouchCapture(): void {
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd, { passive: false });
+    window.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+  }
+
+  function stopTouchCapture(): void {
+    window.removeEventListener('touchmove', handleTouchMove);
+    window.removeEventListener('touchend', handleTouchEnd);
+    window.removeEventListener('touchcancel', handleTouchEnd);
+  }
+
+  function handleTouchStart(event: TouchEvent): void {
+    if (!tileRenderer) return;
+    event.preventDefault();
+    syncViewportScreenScale(tileRenderer, false);
+
+    if (event.touches.length === 1) {
+      const sp = touchOffset(event.touches[0]);
+      touchStartScreen = sp;
+      touchStartTime = performance.now();
+      touchMoved = false;
+      touchMode = 'pan';
+      touchGrabWorld = tileRenderer.viewport.screenToWorldTile(sp);
+      startTouchCapture();
+    } else if (event.touches.length >= 2) {
+      touchMoved = true; // a second finger joining is never a tap
+      const sp0 = touchOffset(event.touches[0]);
+      const sp1 = touchOffset(event.touches[1]);
+      touchMode = 'pinch';
+      pinchStartDistance = touchDistance(sp0, sp1);
+      pinchStartZoom = tileRenderer.zoom;
+      pinchCenterWorld = tileRenderer.viewport.screenToWorldTile(touchMidpoint(sp0, sp1));
+      startTouchCapture();
+    }
+  }
+
+  function handleTouchMove(event: TouchEvent): void {
+    if (!tileRenderer || touchMode == null) return;
+    event.preventDefault();
+    pendingTouchEvent = event;
+    if (touchRafId != null) return;
+    touchRafId = requestAnimationFrame(() => {
+      touchRafId = null;
+      const ev = pendingTouchEvent;
+      pendingTouchEvent = null;
+      if (!ev || !tileRenderer) return;
+      syncViewportScreenScale(tileRenderer, false);
+
+      if (touchMode === 'pan' && ev.touches.length === 1 && touchGrabWorld) {
+        const sp = touchOffset(ev.touches[0]);
+        if (touchDistance(sp, touchStartScreen) > TOUCH_TAP_SLOP_PX) touchMoved = true;
+        panToKeepWorldAtScreen(tileRenderer, touchGrabWorld, sp);
+        syncCameraRevision();
+        render();
+      } else if (touchMode === 'pinch' && ev.touches.length >= 2 && pinchCenterWorld) {
+        const sp0 = touchOffset(ev.touches[0]);
+        const sp1 = touchOffset(ev.touches[1]);
+        if (pinchStartDistance > 0) {
+          tileRenderer.zoomTo(pinchStartZoom * (touchDistance(sp0, sp1) / pinchStartDistance));
+        }
+        panToKeepWorldAtScreen(tileRenderer, pinchCenterWorld, touchMidpoint(sp0, sp1));
+        syncCameraRevision();
+        render();
+      }
+    });
+  }
+
+  function handleTouchEnd(event: TouchEvent): void {
+    if (!tileRenderer) {
+      resetTouchState();
+      stopTouchCapture();
+      return;
+    }
+    event.preventDefault();
+
+    if (touchMode === 'pan' && event.touches.length === 0) {
+      const elapsed = performance.now() - touchStartTime;
+      if (!touchMoved && elapsed < TOUCH_TAP_MAX_MS && touchGrabWorld) {
+        lastAppliedToolTile = null;
+        applyToolAt(touchGrabWorld[0], touchGrabWorld[1]);
+      }
+    }
+
+    if (event.touches.length === 0) {
+      resetTouchState();
+      stopTouchCapture();
+      render();
+    } else if (event.touches.length === 1) {
+      // Lifted one finger out of a pinch -- hand off to a plain pan with the
+      // remaining finger instead of ending the whole gesture.
+      const sp = touchOffset(event.touches[0]);
+      touchStartScreen = sp;
+      touchStartTime = performance.now();
+      touchMoved = true;
+      touchMode = 'pan';
+      touchGrabWorld = tileRenderer.viewport.screenToWorldTile(sp);
+    }
   }
 
   function handlePan(detail: any) {
@@ -824,12 +952,9 @@
     console.log("TileView.svelte: onMount");
 
     if (typeof window != 'undefined') {
-/*
-      // Touch event listeners
-      window.document.addEventListener('touchstart', handleTouchStart, false);
-      window.document.addEventListener('touchmove', handleTouchMove, false);
-      window.document.addEventListener('touchend', handleTouchEnd, false);
-*/
+      // Touch start is bound directly on the canvas (ontouchstart in the
+      // template below); move/end/cancel are captured on window only while
+      // a gesture is active, mirroring the mouse pan capture above.
       window.addEventListener('devicemotion', handleDeviceMotion, false);
       
       // Focus the canvas but don't trap all input
@@ -858,22 +983,20 @@
       cancelAnimationFrame(wheelRafId);
       wheelRafId = null;
     }
+    resetTouchState();
 
     if (typeof window !== 'undefined') {
       window.removeEventListener('mousemove', handlePanMouseMove);
       window.removeEventListener('mouseup', stopPan);
-/*
-      window.document.removeEventListener('touchstart', handleTouchStart);
-      window.document.removeEventListener('touchmove', handleTouchMove);
-      window.document.removeEventListener('touchend', handleTouchEnd);
-*/
+      stopTouchCapture();
       window.removeEventListener('devicemotion', handleDeviceMotion);
       
       // Make sure wheel event listener is removed
       if (canvasGL) {
         const canvas = canvasGL; // Avoid TypeScript null check issues
         canvas.removeEventListener('wheel', onwheel);
-        
+        canvas.removeEventListener('touchstart', handleTouchStart);
+
         // Also remove the mouseenter listener
         canvas.removeEventListener('mouseenter', () => {
           canvas.focus();

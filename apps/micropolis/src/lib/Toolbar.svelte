@@ -10,6 +10,7 @@
 	import { evaluationState } from '$lib/EvaluationState.svelte';
 	import { historyState } from '$lib/HistoryState.svelte';
 	import { rciState } from '$lib/RCIState.svelte';
+	import { toolbarState } from '$lib/ToolbarState.svelte';
 
 	function selectTool(id: ToolId) {
 		toolState.setActiveTool(id);
@@ -60,7 +61,35 @@
 	}
 </script>
 
-<nav class="toolbar" aria-label="City tools">
+{#if toolbarState.open}
+	<button
+		type="button"
+		class="toolbar-backdrop"
+		onclick={() => toolbarState.close()}
+		aria-label="Close menu"
+	></button>
+{:else}
+	<button
+		type="button"
+		class="mp-button toolbar-toggle"
+		onclick={() => toolbarState.toggle()}
+		title="Open menu"
+		aria-label="Open menu"
+	>
+		☰
+	</button>
+{/if}
+
+<nav class="toolbar" class:open={toolbarState.open} aria-label="City tools">
+	<button
+		type="button"
+		class="mp-button toolbar-close"
+		onclick={() => toolbarState.close()}
+		title="Close menu"
+		aria-label="Close menu"
+	>
+		✕
+	</button>
 	<div class="status-panel">
 		<div class="status-funds">${funds.toLocaleString()}</div>
 		<button
@@ -215,6 +244,75 @@
 		contain: layout style;
 		scrollbar-width: thin;
 		scrollbar-color: var(--mp-shadow) transparent;
+	}
+
+	.toolbar-close,
+	.toolbar-backdrop,
+	.toolbar-toggle {
+		display: none;
+	}
+
+	/* Below this width the sidebar's intrinsic (max-content) tool-grid width
+	   takes up enough of the viewport that there's little map left to see or
+	   pan around -- same layout as desktop, just too cramped to use. Collapse
+	   it into a toggleable off-canvas drawer instead of a permanent column. */
+	@media (max-width: 760px) {
+		.toolbar {
+			position: fixed;
+			inset: 0 auto 0 0;
+			max-width: 85vw;
+			box-shadow:
+				inset -1px 0 0 var(--mp-shadow),
+				2px 0 16px rgba(0, 0, 0, 0.55);
+			transform: translateX(-100%);
+			transition: transform 0.22s ease;
+		}
+
+		.toolbar.open {
+			transform: translateX(0);
+		}
+
+		.toolbar-close {
+			display: block;
+			align-self: flex-end;
+			width: auto;
+			margin: 0 0 0.3rem;
+			padding: 0.15rem 0.5rem;
+			font-size: 0.7rem;
+			line-height: 1;
+		}
+
+		.toolbar-backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			z-index: 19;
+			margin: 0;
+			padding: 0;
+			border: none;
+			background: rgba(0, 0, 0, 0.45);
+			cursor: default;
+		}
+
+		.toolbar-toggle {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: fixed;
+			top: 0.5rem;
+			left: 0.5rem;
+			z-index: 21;
+			width: 2.2rem;
+			height: 2.2rem;
+			margin: 0;
+			padding: 0;
+			font-size: 1.1rem;
+			line-height: 1;
+			box-shadow:
+				inset 1px 1px 0 var(--mp-highlight),
+				inset -1px -1px 0 var(--mp-dark-shadow),
+				2px 2px 8px rgba(0, 0, 0, 0.45);
+		}
 	}
 
 	.status-panel {
