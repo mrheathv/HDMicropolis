@@ -61,14 +61,7 @@
 	}
 </script>
 
-{#if toolbarState.open}
-	<button
-		type="button"
-		class="toolbar-backdrop"
-		onclick={() => toolbarState.close()}
-		aria-label="Close menu"
-	></button>
-{:else}
+{#if !toolbarState.open}
 	<button
 		type="button"
 		class="mp-button toolbar-toggle"
@@ -247,7 +240,6 @@
 	}
 
 	.toolbar-close,
-	.toolbar-backdrop,
 	.toolbar-toggle {
 		display: none;
 	}
@@ -280,18 +272,6 @@
 			padding: 0.15rem 0.5rem;
 			font-size: 0.7rem;
 			line-height: 1;
-		}
-
-		.toolbar-backdrop {
-			display: block;
-			position: fixed;
-			inset: 0;
-			z-index: 19;
-			margin: 0;
-			padding: 0;
-			border: none;
-			background: rgba(0, 0, 0, 0.45);
-			cursor: default;
 		}
 
 		.toolbar-toggle {
