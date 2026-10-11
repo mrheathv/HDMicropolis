@@ -35,6 +35,12 @@ export function updateScalarOverlayLayer(
 		blend: options.blend ?? 'multiply',
 		animate: false,
 		flow: 0.55,
+		// Sized in raw tile-index units (see applyActiveOverlay below), not the
+		// 16px/tile engine sprite-pixel space most other atmospheric layers use --
+		// recomputing a 16x-finer buffer every frame would be ~256x the pixels
+		// for no visible benefit at this zoom level. blitAtmosphericLayer needs
+		// to know this to map the layer to the screen correctly.
+		pixelsPerTile: 1,
 	});
 
 	layer.fillFromTileGrid(
@@ -78,8 +84,10 @@ export function applyActiveOverlay(
 	if (!grid) return;
 
 	updateScalarOverlayLayer(SCALAR_OVERLAY_IDS[activeId], grid.values, {
-		// MapViewport's "world pixel" space is tile-index units (its tileWidth/tileHeight
-		// are hardcoded to 1 by the renderer), so the layer must be sized in tile units too.
+		// Deliberately sized in raw tile-index units, not engine sprite-pixel
+		// space (see the pixelsPerTile:1 comment in updateScalarOverlayLayer
+		// above) -- a 16x-finer buffer recomputed every frame would be ~256x
+		// the pixels for no visible benefit at this zoom level.
 		worldWidth: engine.WORLD_W,
 		worldHeight: engine.WORLD_H,
 		mapWidth: grid.mapWidth,

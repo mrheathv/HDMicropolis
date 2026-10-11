@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { MapViewport } from '@micropolis/render-core';
-	import { getAtmosphericLayer, blitAtmosphericLayer, listAtmosphericLayerIds, getLayerBlend } from './layerRegistry';
+	import { getAtmosphericLayer, blitAtmosphericLayer, listAtmosphericLayerIds, getLayerBlend, getLayerPixelsPerTile } from './layerRegistry';
 
 	interface Props {
 		viewport: MapViewport;
@@ -17,7 +17,7 @@
 		ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 		for (const id of listAtmosphericLayerIds()) {
 			const layer = getAtmosphericLayer(id);
-			if (layer) blitAtmosphericLayer(ctx, layer, viewport, getLayerBlend(id));
+			if (layer) blitAtmosphericLayer(ctx, layer, viewport, getLayerBlend(id), getLayerPixelsPerTile(id));
 		}
 	}
 
