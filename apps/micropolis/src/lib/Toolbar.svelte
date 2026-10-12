@@ -31,18 +31,23 @@
 
 	const funds = $derived(micropolisReactive.totalFunds);
 	const dateLabel = $derived(`${micropolisReactive.cityMonth}/${micropolisReactive.cityYear}`);
-	const simLabel = $derived(
-		micropolisReactive.simPaused
-			? 'Paused'
-			: micropolisReactive.simSpeed > 0
-				? `Speed ${micropolisReactive.simSpeed + 1}`
-				: 'Stopped'
-	);
+	const pauseLabel = $derived(micropolisReactive.simPaused ? 'Resume' : 'Pause');
+	// Index into MicropolisSimulator.keyFramesPerSecondValues/keyPassesValues (0-8) --
+	// see the gameSpeedIndex doc comment in MicropolisReactive.svelte.ts for why this,
+	// not Micropolis.simSpeed, is the number that actually changes.
+	const MIN_SPEED = 0;
+	const MAX_SPEED = 8;
+	const speedLabel = $derived(`Speed ${micropolisReactive.gameSpeedIndex + 1}`);
 	const taxLabel = $derived(`Tax ${micropolisReactive.cityTax}%`);
 
 	function togglePause() {
 		if (micropolisReactive.simPaused) micropolisReactive.poke.resume();
 		else micropolisReactive.poke.pause();
+	}
+
+	// Picking a speed un-pauses (matches keyboard 1-9 and the classic Priority menu).
+	function adjustSpeed(delta: number) {
+		micropolisReactive.poke.setGameSpeed(micropolisReactive.gameSpeedIndex + delta);
 	}
 
 	// Classic SimCity's RCI demand valves are clamped to ±1500 (see update.cpp).
@@ -130,8 +135,31 @@
 			onclick={togglePause}
 			title={micropolisReactive.simPaused ? 'Resume the simulation' : 'Pause the simulation'}
 		>
-			{simLabel}
+			{pauseLabel}
 		</button>
+		<div class="status-speed-control" title="Simulation speed (1 slowest – 9 fastest)">
+			<button
+				type="button"
+				class="mp-button speed-step"
+				onclick={() => adjustSpeed(-1)}
+				disabled={micropolisReactive.gameSpeedIndex <= MIN_SPEED}
+				aria-label="Slower"
+				title="Slower"
+			>
+				−
+			</button>
+			<span class="speed-label">{speedLabel}</span>
+			<button
+				type="button"
+				class="mp-button speed-step"
+				onclick={() => adjustSpeed(1)}
+				disabled={micropolisReactive.gameSpeedIndex >= MAX_SPEED}
+				aria-label="Faster"
+				title="Faster"
+			>
+				+
+			</button>
+		</div>
 		<button
 			type="button"
 			class="mp-button status-button"
@@ -394,6 +422,46 @@
 
 	.status-speed.paused {
 		color: var(--mp-warn-text);
+	}
+
+	.status-speed-control {
+		display: flex;
+		align-items: stretch;
+		gap: 0.2rem;
+		width: 100%;
+	}
+
+	.speed-step {
+		flex: 0 0 auto;
+		width: 1.3rem;
+		margin: 0;
+		padding: 0;
+		font-size: 0.6rem;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+	}
+
+	.speed-step:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+
+	.speed-label {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.2rem 0.1rem;
+		font-size: 0.5rem;
+		font-variant-numeric: tabular-nums;
+		color: var(--mp-text);
+		background: var(--mp-face);
+		border: 2px solid var(--mp-border);
+		box-shadow:
+			inset 1px 1px 0 var(--mp-highlight),
+			inset -1px -1px 0 var(--mp-dark-shadow);
 	}
 
 	.status-feedback {

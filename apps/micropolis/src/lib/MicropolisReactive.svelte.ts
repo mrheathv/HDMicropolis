@@ -36,6 +36,16 @@ let gameLevel = $state(0);
 let simSpeed = $state(0);
 let simPasses = $state(1);
 let simPaused = $state(false);
+/**
+ * Index into MicropolisSimulator.keyFramesPerSecondValues/keyPassesValues
+ * (0-8) -- the JS-side tick-rate throttle that keyboard shortcuts 1-9 and
+ * micropolisCommands.ts's sim.set-speed-N already drive. Deliberately NOT
+ * the engine's own Micropolis.simSpeed (0-3): nothing in the app ever calls
+ * Micropolis.setSpeed() after city load, so that field sits frozen at
+ * fileio.cpp's loadCity default (3, i.e. "don't skip cycles") forever --
+ * nothing to adjust there. This mirror is the one real estate that changes.
+ */
+let gameSpeedIndex = $state(3);
 let cityTax = $state(0);
 let autoBudget = $state(true);
 let autoBulldoze = $state(true);
@@ -341,6 +351,7 @@ export interface MicropolisReactiveSnapshot {
 	demandI: number;
 	gameLevel: number;
 	simSpeed: number;
+	gameSpeedIndex: number;
 	simPasses: number;
 	simPaused: boolean;
 	cityTax: number;
@@ -407,6 +418,13 @@ function tileLinearIndex(x: number, y: number): number | null {
 	return y * b.w + x;
 }
 
+/** Shared by poke.resume() and poke.setGameSpeed() (picking a speed un-pauses). */
+function resumeSim(): void {
+	requireMicropolis().resume();
+	attachedSimulator?.setPaused?.(false);
+	syncFromEngine();
+}
+
 export const micropolisReactive = {
 	get engineCallback(): JSCallback {
 		return engineCallbackSingleton as JSCallback;
@@ -414,10 +432,27 @@ export const micropolisReactive = {
 
 	attach(sim: MicropolisSimulator): void {
 		attachedSimulator = sim;
+		// Guard against minimal test doubles (typed as MicropolisSimulator but
+		// missing these fields/methods at runtime).
+		gameSpeedIndex = sim.gameSpeed ?? 3;
+		// MicropolisSimulator.setGameSpeed() is also called directly by
+		// micropolisCommands.ts (keyboard shortcuts 1-9) -- that file is loaded
+		// by a plain Node/tsx CLI entry point too, so it can't import this
+		// Svelte-runes module itself. This hook is how a speed change made
+		// there still reaches gameSpeedIndex, instead of the two staying out
+		// of sync (see gameSpeedIndex's doc comment above).
+		if (sim.onGameSpeedChange !== undefined) {
+			sim.onGameSpeedChange = (index) => {
+				gameSpeedIndex = index;
+			};
+		}
 		syncFromEngine();
 	},
 
 	detach(): void {
+		if (attachedSimulator?.onGameSpeedChange !== undefined) {
+			attachedSimulator.onGameSpeedChange = null;
+		}
 		attachedSimulator = null;
 	},
 
@@ -517,9 +552,19 @@ export const micropolisReactive = {
 			syncFromEngine();
 		},
 		resume(): void {
-			requireMicropolis().resume();
-			attachedSimulator?.setPaused?.(false);
-			syncFromEngine();
+			resumeSim();
+		},
+		/**
+		 * JS-side tick-rate index (0-8), the one speed knob that actually
+		 * changes anything today -- see the gameSpeedIndex doc comment above.
+		 * Matches keyboard 1-9 (micropolisCommands.ts's sim.set-speed-N) and
+		 * the classic Priority menu's behavior: picking a speed un-pauses.
+		 */
+		setGameSpeed(index: number): void {
+			const clamped = Math.max(0, Math.min(8, Math.round(index)));
+			attachedSimulator?.setGameSpeed?.(clamped);
+			gameSpeedIndex = clamped;
+			if (simPaused) resumeSim();
 		},
 		doTool(tool: EditingTool, x: number, y: number): ToolResult {
 			const r = requireMicropolis().doTool(tool, x, y);
@@ -668,6 +713,9 @@ export const micropolisReactive = {
 	get simSpeed() {
 		return simSpeed;
 	},
+	get gameSpeedIndex() {
+		return gameSpeedIndex;
+	},
 	get simPasses() {
 		return simPasses;
 	},
@@ -754,6 +802,7 @@ export const micropolisReactive = {
 			demandI,
 			gameLevel,
 			simSpeed,
+			gameSpeedIndex,
 			simPasses,
 			simPaused,
 			cityTax,

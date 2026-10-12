@@ -190,10 +190,20 @@ export class MicropolisSimulator {
         }
     }
     
+    /**
+     * Optional hook a reactive UI layer can attach to learn about speed changes
+     * made through this class directly (e.g. keyboard shortcuts / CLI, which
+     * call setGameSpeed() here rather than going through a Svelte-only poke
+     * method) without this plain, CLI-loadable class importing anything
+     * Svelte-reactive itself.
+     */
+    onGameSpeedChange: ((speed: number) => void) | null = null;
+
     setGameSpeed(speed: number) {
         this.gameSpeed = speed;
         this.setFramesPerSecond(this.keyFramesPerSecondValues[this.gameSpeed]);
         this.micropolis?.setPasses(this.keyPassesValues[this.gameSpeed]);
+        this.onGameSpeedChange?.(this.gameSpeed);
     }
 
     resetFramesPerSecond() {
