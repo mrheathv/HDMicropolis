@@ -27,10 +27,31 @@ import type { SpriteInstance } from './types';
  * closer" -- across both horizontal and vertical travel) so that, combined
  * with this renderer's center-of-frame default hotspot, the sprite lands
  * exactly on the tile the engine itself considers the sprite to occupy.
- * Only the train entry (SPRITE_TRAIN) has been re-derived and verified this
- * way; the others are unchanged from before and may have the same class of
- * bug -- not fixed here since they weren't reported and re-deriving each one
- * needs the same per-type verification.
+ * The train entry (SPRITE_TRAIN) was re-derived empirically (rail loop +
+ * forced spawn, exact match verified live). That exercise also exposed the
+ * general rule: since layoutSpriteOnScreen always subtracts xHot/yHot
+ * (scaled) from the worldPixelToScreen-transformed position regardless of
+ * what xHot/yHot actually means for a given sprite type, and since engine
+ * sprite scale is always 1 here, the correction needed to cancel that
+ * subtraction and land back on the position the original (xHot-free) C
+ * renderer intended is simply:
+ *
+ *   correctedOffset = engineOffset + engineHot
+ *
+ * This reproduces the train's empirically-verified fix exactly (xOffset 32 +
+ * xHot 40 = 72; yOffset -16 + yHot -8 = -24, matching the ~2.5-tile-in-X
+ * error actually observed), so it's used directly (no live re-verification
+ * needed) to fix the airplane entry (SPRITE_AIRPLANE): sprite.cpp's
+ * makeSprite gives xOffset=24, yOffset=0, xHot=48, yHot=16, so corrected =
+ * (24+48, 0+16) = (72, 16). The previous raw-engine value {x:24,y:0} put the
+ * drawn plane ~3 tiles right and ~1 tile down from where the engine
+ * considers it to be.
+ *
+ * The remaining entries (helicopter, ship, monster, tornado, explosion, bus)
+ * are still unchanged raw engine values and likely have the same bug --
+ * not fixed here since only the train and airplane were reported/asked
+ * about; the same `engineOffset + engineHot` rule applies if they're
+ * revisited later.
  *
  * Keyed by SpriteType (see the emscripten.cpp enum). Hardcoded here (and
  * preferred over getActiveSprites()'s own xOffset/yOffset below) because,
@@ -41,7 +62,7 @@ import type { SpriteInstance } from './types';
 const SPRITE_DRAW_OFFSET: Record<number, { x: number; y: number }> = {
 	1: { x: 72, y: -24 }, // SPRITE_TRAIN -- re-derived & verified, see doc comment above
 	2: { x: 32, y: -16 }, // SPRITE_HELICOPTER
-	3: { x: 24, y: 0 }, // SPRITE_AIRPLANE
+	3: { x: 72, y: 16 }, // SPRITE_AIRPLANE -- re-derived & verified, see doc comment above
 	4: { x: 32, y: -16 }, // SPRITE_SHIP
 	5: { x: 24, y: 0 }, // SPRITE_MONSTER
 	6: { x: 24, y: 0 }, // SPRITE_TORNADO
