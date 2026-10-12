@@ -70,6 +70,39 @@ const SPRITE_DRAW_OFFSET: Record<number, { x: number; y: number }> = {
 	8: { x: 30, y: -18 }, // SPRITE_BUS
 };
 
+/**
+ * doAirplaneSprite() (sprite.cpp) drives both movement and sprite->frame
+ * from the same 1-8 compass value z (CDx[z]/CDy[z] for movement, turnTo()
+ * for z itself) -- so frame IS heading, by construction, in the engine.
+ * But airplane.json's frame "index" fields were authored 0-7 (one slot per
+ * atlas column), so a literal `index === frame` lookup resolves engine
+ * frame z to atlas slot z -- when the art actually drawn at slot z (verified
+ * by visually inspecting classic-sprite-plane-hd4x.png) is the NEXT compass
+ * step clockwise from z, i.e. slot z shows the art for bearing z+1. Net
+ * effect: the plane is always drawn rotated one compass step (45 deg)
+ * ahead of the direction it's actually flying.
+ *
+ * Fixed here (not in the shared manifest) because airplane.json's frame
+ * indices are also consumed directly by the skywriting plugin
+ * (SkywritingPlugin.svelte.ts), which picks a fixed frame (2) and rotates
+ * it continuously via CSS `rotate(heading)` with no baseline offset -- i.e.
+ * it depends on frame 2 specifically being the atlas slot that points due
+ * east (which it is, pre-shift). Reindexing the manifest to fix the engine
+ * sprite would silently break that independent convention; shifting only
+ * the engine-sourced frame number here keeps both working.
+ *
+ * Takeoff states (engine frame 9-11, see doAirplaneSprite's TakeOff branch)
+ * have no per-direction art of their own -- airplane.json has placeholder
+ * entries at index 8, 9, 10 (all the same stub atlas cell) for exactly
+ * this case. Shifted by one, frames 9-11 become 8-10, which still match
+ * those same placeholder entries directly, so takeoff's (undirected,
+ * placeholder) look is unchanged.
+ */
+function engineFrameToManifestFrame(type: number, frame: number): number {
+	const SPRITE_AIRPLANE = 3;
+	return type === SPRITE_AIRPLANE ? frame - 1 : frame;
+}
+
 export function syncEngineSprites(micropolis: Micropolis | null, packId: string): SpriteInstance[] {
 	if (!micropolis) return [];
 
@@ -104,7 +137,7 @@ export function syncEngineSprites(micropolis: Micropolis | null, packId: string)
 			source: 'engine',
 			manifestId: manifest.id,
 			packId,
-			frame: s.frame,
+			frame: engineFrameToManifestFrame(s.type, s.frame),
 			worldX: s.x + offsetX,
 			worldY: s.y + offsetY,
 			xHot: s.xHot,
